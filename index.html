@@ -450,6 +450,7 @@
             background: transparent;
             border-radius: 0;
             overflow: visible;
+            padding-bottom: 66px;
         }
 
         .chat-messages {
@@ -562,16 +563,25 @@
         }
 
         /* Chat input bar — ChatGPT pill, send button tucked inside */
-        .chat-input-bar {
-            position: sticky;
-            bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+        .chat-input-bar-wrap {
+            position: fixed; left: 0; right: 0;
+            bottom: calc(64px + env(safe-area-inset-bottom, 0px));
             z-index: 40;
+            display: flex; justify-content: center;
+            padding: 0 15px;
+            pointer-events: none;
+        }
+        .chat-input-bar-wrap .chat-input-bar { pointer-events: auto; }
+        .chat-input-bar {
+            width: 100%; max-width: 750px;
             display: flex; align-items: flex-end; gap: 0;
             padding: 0;
             border-top: none;
-            background: rgba(255,255,255,0.05);
+            background: rgba(30,32,48,0.92);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 26px;
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
             box-shadow: 0 10px 30px rgba(0,0,0,0.45);
             transition: border-color 0.2s, background 0.2s;
         }
@@ -1185,11 +1195,13 @@
                 <div class="chat-chip" onclick="chipSend(this)">Spent 250 on groceries</div>
             </div>
 
-            <div class="chat-input-bar ai-home-input-bar">
-                <textarea class="chat-input ai-home-input" id="chatInput"
-                    placeholder="Message Aria…"
-                    rows="1" onkeydown="chatKeyDown(event)" oninput="autoResizeChat(this)"></textarea>
-                <button class="chat-send" onclick="sendChat()" aria-label="Send">↑</button>
+            <div class="chat-input-bar-wrap">
+                <div class="chat-input-bar ai-home-input-bar">
+                    <textarea class="chat-input ai-home-input" id="chatInput"
+                        placeholder="Message Aria…"
+                        rows="1" onkeydown="chatKeyDown(event)" oninput="autoResizeChat(this)"></textarea>
+                    <button class="chat-send" onclick="sendChat()" aria-label="Send">↑</button>
+                </div>
             </div>
         </div>
     </div>
