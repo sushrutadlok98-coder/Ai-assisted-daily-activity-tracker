@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Aria — AI Life Assistant</title>
-    <meta name="description" content="Your personal AI life assistant — tasks, study, diet, workouts, habits and expenses in one place.">
+    <title>LifeQuest — Productivity + Arcade</title>
+    <meta name="description" content="LifeQuest — manage tasks, habits and goals, then spend the coins you earn on arcade games like Snake.">
     <meta name="theme-color" content="#0d0e15">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Aria">
+    <meta name="apple-mobile-web-app-title" content="LifeQuest">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237b2cbf'/%3E%3Cstop offset='1' stop-color='%23b583ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='66' font-size='52' text-anchor='middle' fill='white' font-family='-apple-system,sans-serif'%3EA%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237b2cbf'/%3E%3Cstop offset='1' stop-color='%23b583ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23g)'/%3E%3Ctext x='50' y='66' font-size='52' text-anchor='middle' fill='white' font-family='-apple-system,sans-serif'%3EA%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237b2cbf'/%3E%3Cstop offset='1' stop-color='%23b583ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='66' font-size='46' text-anchor='middle' fill='white' font-family='-apple-system,sans-serif'%3ELQ%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237b2cbf'/%3E%3Cstop offset='1' stop-color='%23b583ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23g)'/%3E%3Ctext x='50' y='66' font-size='46' text-anchor='middle' fill='white' font-family='-apple-system,sans-serif'%3ELQ%3C/text%3E%3C/svg%3E">
     <style>
         :root {
             --bg-color: #0d0e15;
@@ -34,6 +34,15 @@
             --cat-workout-light: #4cdc9f;
             --cat-task: #2f80c9;
             --cat-task-light: #7eb8ff;
+
+            /* gamification / arcade accents */
+            --coin: #f5c84b;
+            --coin-light: #ffe08a;
+            --xp: #7c5cff;
+            --xp-light: #b3a2ff;
+            --arcade-bg: #14141b;
+            --arcade-surface: #1c1c25;
+            --arcade-border: #2a2a35;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -1090,6 +1099,350 @@
         }
         .config-saved-msg.show { display: flex; }
     </style>
+
+    <!-- ── LifeQuest: Arcade + Profile styles ── -->
+    <style>
+        /* ===== Arcade tab ===== */
+        .arcade-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; gap: 10px;
+        }
+        .arcade-title { font-size: 1.3rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.3px; }
+        .arcade-title .sub { display:block; font-size: 0.78rem; font-weight: 500; color: var(--text-muted); margin-top: 2px; }
+        .arcade-wallet {
+            display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(245,200,75,0.2), rgba(245,200,75,0.08));
+            border: 1px solid rgba(245,200,75,0.4); border-radius: 999px;
+            padding: 8px 14px; font-weight: 800; color: var(--coin); font-size: 0.95rem;
+        }
+        .arcade-wallet .coin-ic { filter: drop-shadow(0 0 4px rgba(245,200,75,0.6)); }
+
+        .arcade-level-strip {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(124,92,255,0.1); border: 1px solid rgba(124,92,255,0.28);
+            border-radius: 16px; padding: 10px 14px; margin-bottom: 18px;
+        }
+        .arcade-level-chip {
+            flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: #fff;
+            background: linear-gradient(135deg, var(--xp), #b583ff);
+            border-radius: 9px; padding: 6px 9px;
+        }
+        .arcade-level-strip .alx-bar { flex: 1; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .arcade-level-strip .alx-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--xp), var(--accent-light)); transition: width 0.5s ease; }
+        .arcade-level-strip .alx-label { font-size: 0.68rem; color: var(--text-muted); flex-shrink: 0; }
+
+        .arcade-section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin: 18px 0 10px; font-weight: 600; }
+
+        .arcade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .game-card {
+            position: relative; overflow: hidden; border-radius: 20px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+            border: 1px solid var(--border-color); padding: 16px 14px 14px;
+            cursor: pointer; transition: transform 0.2s cubic-bezier(.22,1,.36,1), border-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent; min-height: 132px;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .game-card:active { transform: scale(0.96); }
+        .game-card.locked { opacity: 0.6; cursor: default; }
+        .game-card.locked:active { transform: none; }
+        .game-card .gc-icon { font-size: 1.8rem; line-height: 1; }
+        .game-card .gc-name { font-size: 0.92rem; font-weight: 700; color: var(--text-main); margin-top: 10px; }
+        .game-card .gc-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 3px; }
+        .game-card .gc-badge {
+            position: absolute; top: 10px; right: 10px; font-size: 0.6rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.4px; padding: 3px 7px; border-radius: 999px;
+        }
+        .game-card.live .gc-badge { background: rgba(76,220,159,0.2); color: #4cdc9f; border: 1px solid rgba(76,220,159,0.4); }
+        .game-card.locked .gc-badge { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--border-color); }
+        .game-card.live:hover { border-color: rgba(245,200,75,0.4); }
+        .game-card .gc-lock-icon { font-size: 1rem; opacity: 0.7; }
+
+        .arcade-empty-note {
+            font-size: 0.78rem; color: var(--text-muted); text-align: center;
+            padding: 10px 6px 2px; line-height: 1.5;
+        }
+
+        /* Snake sub-view container inside Arcade tab */
+        .arcade-game-view { display: none; }
+        .arcade-game-view.active { display: block; }
+        .arcade-game-view .arcade-back-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main);
+            border-radius: 12px; padding: 8px 13px; font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; margin-bottom: 12px; -webkit-tap-highlight-color: transparent;
+            transition: padding .2s ease, opacity .2s ease, transform .2s ease;
+        }
+        .arcade-game-view .arcade-back-btn:active { transform: scale(0.96); }
+        /* While a Snake run is actually in progress, shrink the back button
+           down to a small icon-only affordance — it's still reachable, but
+           it stops competing with the board for vertical space. The Snake
+           module toggles body.lq-game-active for exactly this purpose. */
+        body.lq-game-active .arcade-game-view .arcade-back-btn {
+            padding: 8px; gap: 0; width: 36px; height: 36px;
+            justify-content: center; overflow: hidden; border-radius: 50%;
+        }
+        body.lq-game-active .arcade-game-view .arcade-back-btn .back-label {
+            display: none;
+        }
+        #arcadeGameHost {
+            border-radius: 22px; border: 1px solid var(--arcade-border);
+            background: var(--arcade-bg);
+            /* Let Snake's actual content set the height — clipping it here is
+               what was cutting the game off partway down on phones. */
+            min-height: 640px;
+        }
+
+        /* ── Fullscreen game mode ──────────────────────────────────────
+           While a game is open, LifeQuest's own bottom nav and FAB float
+           on top of it (they're position:fixed to the viewport) and the
+           dashboard card's max-width/padding visually squeeze the board.
+           Hide/relax all of that so the game gets the whole screen, and
+           "← Back to Arcade" is the one way back to LifeQuest's chrome.
+
+           Crucially this also has to hide the dashboard's own header,
+           clock, storage badge, backup reminder and stats bar — these are
+           plain siblings of the tab panels (not scoped to any one tab),
+           so without this they'd keep eating ~300-400px above the board
+           even in "fullscreen" mode, defeating the whole point. */
+        body.lq-game-fullscreen .bottom-nav,
+        body.lq-game-fullscreen .fab-root,
+        body.lq-game-fullscreen .fab-backdrop,
+        body.lq-game-fullscreen .connection-banner,
+        body.lq-game-fullscreen .arcade-header,
+        body.lq-game-fullscreen .dashboard > header,
+        body.lq-game-fullscreen .dashboard > .clock-wrapper,
+        body.lq-game-fullscreen .dashboard > .storage-badge,
+        body.lq-game-fullscreen .dashboard > .backup-reminder,
+        body.lq-game-fullscreen .dashboard > .stats-bar {
+            display: none !important;
+        }
+        body.lq-game-fullscreen { overflow: hidden; padding: 0; align-items: stretch; }
+        body.lq-game-fullscreen .tab-panel.active {
+            padding-bottom: 0 !important;
+        }
+        body.lq-game-fullscreen .dashboard {
+            max-width: none; width: 100%; padding: 0; background: transparent;
+            border: none; box-shadow: none; backdrop-filter: none;
+            height: 100vh; height: 100dvh; overflow: hidden;
+        }
+        body.lq-game-fullscreen #panel-arcade {
+            height: 100%; display: flex; flex-direction: column;
+        }
+        body.lq-game-fullscreen #panel-arcade #arcadeRoot {
+            flex: 1; min-height: 0; display: flex; flex-direction: column;
+        }
+        body.lq-game-fullscreen .arcade-game-view {
+            flex: 1; min-height: 0; display: flex; flex-direction: column;
+        }
+        body.lq-game-fullscreen .arcade-game-view.active {
+            display: flex;
+        }
+        body.lq-game-fullscreen #arcadeGameHost {
+            flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+        /* While a run is actually in progress, the board is sized to fit
+           exactly (see Render.layoutBoard in the Snake module), so this
+           never needs to scroll — and locking it explicitly means a
+           swipe-to-move gesture on the board can never be mistaken for
+           a page scroll. body.lq-game-active is toggled by the Snake
+           module itself in lockstep with is-playing/is-paused. */
+        body.lq-game-active #arcadeGameHost {
+            overflow-y: hidden;
+        }
+        body.lq-game-fullscreen .arcade-game-view .arcade-back-btn {
+            margin: 8px 10px 8px;
+            flex: 0 0 auto;
+        }
+
+        /* ===== Profile tab ===== */
+        .profile-header {
+            display: flex; align-items: center; gap: 14px;
+            background: linear-gradient(160deg, rgba(123,44,191,0.18), rgba(22,25,41,0.6));
+            border: 1px solid var(--border-color); border-radius: 24px;
+            padding: 18px; margin-bottom: 16px;
+        }
+        .profile-avatar {
+            width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 1.7rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            box-shadow: 0 4px 14px rgba(123,44,191,0.4);
+        }
+        .profile-id { flex: 1; min-width: 0; }
+        .profile-name { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+        .profile-level-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+        .profile-level-chip {
+            font-size: 0.68rem; font-weight: 800; color: #fff;
+            background: linear-gradient(135deg, var(--xp), #b583ff);
+            border-radius: 8px; padding: 4px 8px; flex-shrink: 0;
+        }
+        .profile-xp-bar { flex: 1; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .profile-xp-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--xp), var(--accent-light)); transition: width 0.5s ease; }
+
+        .profile-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+        .profile-stat-card {
+            background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 12px 10px; text-align: center;
+        }
+        .profile-stat-card .ps-icon { font-size: 1.05rem; }
+        .profile-stat-card .ps-value { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-top: 4px; }
+        .profile-stat-card .ps-label { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+
+        .profile-section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin: 4px 0 10px; font-weight: 600; }
+
+        /* ===== Reward animation overlay ===== */
+        .lq-reward-overlay {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 10px; padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+            pointer-events: none;
+        }
+        .lq-reward-card {
+            display: flex; align-items: center; gap: 12px;
+            background: linear-gradient(135deg, rgba(28,28,40,0.96), rgba(20,20,30,0.96));
+            border: 1px solid rgba(245,200,75,0.45); border-radius: 18px;
+            padding: 12px 18px; box-shadow: 0 14px 34px rgba(0,0,0,0.5), 0 0 26px rgba(245,200,75,0.22);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            opacity: 0; transform: translateY(-16px) scale(0.94);
+            transition: opacity 0.32s cubic-bezier(.22,1,.36,1), transform 0.32s cubic-bezier(.22,1,.36,1);
+            max-width: 88vw;
+        }
+        .lq-reward-card.show { opacity: 1; transform: translateY(0) scale(1); }
+        .lq-reward-card.out { opacity: 0; transform: translateY(-10px) scale(0.96); }
+        .lq-reward-icon { font-size: 1.6rem; flex-shrink: 0; filter: drop-shadow(0 0 8px rgba(245,200,75,0.5)); }
+        .lq-reward-title { font-size: 0.86rem; font-weight: 700; color: var(--text-main); }
+        .lq-reward-pills { display: flex; gap: 6px; margin-top: 4px; }
+        .lq-reward-pill { font-size: 0.72rem; font-weight: 800; border-radius: 999px; padding: 2px 9px; }
+        .lq-reward-coin { background: rgba(245,200,75,0.18); color: var(--coin); border: 1px solid rgba(245,200,75,0.4); }
+        .lq-reward-xp { background: rgba(124,92,255,0.18); color: var(--xp-light); border: 1px solid rgba(124,92,255,0.4); }
+
+        /* ===== Home dashboard additions ===== */
+        .home-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+        .home-stat-chip {
+            background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 11px 8px; text-align: center;
+        }
+        .home-stat-chip .hsc-icon { font-size: 1rem; }
+        .home-stat-chip .hsc-value { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-top: 3px; }
+        .home-stat-chip .hsc-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+        .home-stat-chip.is-streak .hsc-value { color: #ff9f43; }
+
+        .home-quickstart-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff; font-size: 0.92rem; font-weight: 700; letter-spacing: 0.2px;
+            border-radius: 16px; padding: 14px; margin-bottom: 16px;
+            box-shadow: 0 8px 22px rgba(123,44,191,0.4);
+            transition: transform 0.15s ease;
+        }
+        .home-quickstart-btn:active { transform: scale(0.97); }
+
+        .home-achv-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+        .home-achv-row::-webkit-scrollbar { display: none; }
+        .home-achv-chip {
+            flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+            width: 76px; background: var(--input-bg); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 10px 6px;
+        }
+        .home-achv-chip .ha-icon { font-size: 1.3rem; }
+        .home-achv-chip .ha-name { font-size: 0.6rem; color: var(--text-muted); text-align: center; line-height: 1.25; }
+        .home-achv-empty { font-size: 0.78rem; color: var(--text-muted); padding: 8px 2px; }
+
+        /* ===== Achievements grid (Profile / Progress) ===== */
+        .achv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .achv-card {
+            background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 12px 10px; text-align: center; opacity: 0.45;
+        }
+        .achv-card.unlocked { opacity: 1; border-color: rgba(245,200,75,0.4); background: linear-gradient(160deg, rgba(245,200,75,0.1), rgba(255,255,255,0.02)); }
+        .achv-card .ac-icon { font-size: 1.5rem; }
+        .achv-card .ac-name { font-size: 0.76rem; font-weight: 700; color: var(--text-main); margin-top: 6px; }
+        .achv-card .ac-desc { font-size: 0.65rem; color: var(--text-muted); margin-top: 3px; line-height: 1.3; }
+        .achv-card .ac-status { font-size: 0.6rem; font-weight: 700; margin-top: 6px; color: var(--coin); }
+        .achv-card:not(.unlocked) .ac-status { color: var(--text-muted); }
+
+        /* ===== Stats list (Progress page) ===== */
+        .lq-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .lq-stat-card {
+            background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 12px 12px;
+        }
+        .lq-stat-card .lsc-value { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
+        .lq-stat-card .lsc-label { font-size: 0.66rem; color: var(--text-muted); margin-top: 2px; }
+
+        /* ===== Game card cost / description (Arcade) ===== */
+        .game-card .gc-desc { font-size: 0.68rem; color: var(--text-muted); margin-top: 3px; line-height: 1.35; }
+        .game-card .gc-cost-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+        .game-card .gc-cost { font-size: 0.74rem; font-weight: 800; color: var(--coin); display: flex; align-items: center; gap: 3px; }
+        .game-card .gc-play-btn {
+            font-size: 0.68rem; font-weight: 800; color: #06231b;
+            background: linear-gradient(135deg, var(--coin), var(--coin-light));
+            border-radius: 999px; padding: 5px 11px; border: none;
+        }
+        .game-card.locked .gc-cost { color: var(--text-muted); }
+
+        /* ===== Not-enough-coins modal ===== */
+        .lq-modal-backdrop {
+            position: fixed; inset: 0; z-index: 150; background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+        }
+        .lq-modal-backdrop.show { opacity: 1; pointer-events: auto; }
+        .lq-modal-card {
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 22px;
+            padding: 22px; max-width: 320px; text-align: center; backdrop-filter: blur(20px);
+        }
+        .lq-modal-card .lmc-icon { font-size: 2rem; }
+        .lq-modal-card .lmc-title { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-top: 8px; }
+        .lq-modal-card .lmc-desc { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+        .lq-modal-card .lmc-btn {
+            margin-top: 16px; width: 100%; border: none; cursor: pointer;
+            background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff;
+            font-weight: 700; font-size: 0.86rem; border-radius: 14px; padding: 11px;
+        }
+
+        /* ===== Task-type pill selector (Tasks tab) ===== */
+        .task-type-row { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .task-type-pill {
+            font-size: 0.72rem; font-weight: 700; color: var(--text-muted);
+            background: var(--input-bg); border: 1px solid var(--border-color);
+            border-radius: 999px; padding: 6px 12px; cursor: pointer;
+            -webkit-tap-highlight-color: transparent; transition: all 0.15s ease;
+        }
+        .task-type-pill.active {
+            color: #fff; border-color: transparent;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+        }
+
+        /* ===== Snake session UI (results modal) =====
+           The session timer chip now lives inside the floating in-game
+           HUD (.hud-timer, styled in the Snake module's own stylesheet);
+           only the end-of-session results card is styled from here. */
+        @keyframes lqPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        .lq-snake-root .session-results {
+            position: absolute; inset: 0; z-index: 55; background: rgba(0,0,0,0.75);
+            display: flex; align-items: center; justify-content: center; padding: 16px;
+            backdrop-filter: blur(6px);
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+        .lq-snake-root .session-results-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+            padding: 22px; max-width: 320px; width: 100%; text-align: center;
+        }
+        .lq-snake-root .session-results-card .src-title { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+        .lq-snake-root .session-results-card .src-score { font-size: 2rem; font-weight: 800; color: var(--text); margin: 8px 0 2px; }
+        .lq-snake-root .session-results-card .src-rewards { display: flex; justify-content: center; gap: 8px; margin: 14px 0; }
+        .lq-snake-root .session-results-card .src-pill {
+            font-size: 0.78rem; font-weight: 800; border-radius: 999px; padding: 5px 11px;
+        }
+        .lq-snake-root .session-results-card .src-coin { background: rgba(245,200,75,0.18); color: var(--gold); border: 1px solid rgba(245,200,75,0.4); }
+        .lq-snake-root .session-results-card .src-xp { background: rgba(124,92,255,0.18); color: #b3a2ff; border: 1px solid rgba(124,92,255,0.4); }
+        .lq-snake-root .session-results-card .src-btn {
+            margin-top: 6px; width: 100%; border: none; cursor: pointer; padding: 11px;
+            border-radius: 12px; font-weight: 700; font-size: 0.85rem;
+            background: var(--accent); color: #06231b;
+        }
+    </style>
 </head>
 <body>
 
@@ -1102,8 +1455,8 @@
 
 <div class="dashboard">
     <header>
-        <h1 id="appTitle">My Daily Planner</h1>
-        <p>Track study, diet & workouts — all in one place</p>
+        <h1 id="appTitle">LifeQuest</h1>
+        <p>Productivity + Arcade — earn coins, play games</p>
     </header>
 
     <div class="clock-wrapper">
@@ -1331,6 +1684,18 @@
                 <div class="goal-list" id="goalList"></div>
             </div>
 
+            <!-- LifeQuest stats -->
+            <div class="glass-card">
+                <div class="glass-card-title">🪙 LifeQuest Stats</div>
+                <div class="lq-stats-grid" id="lqStatsGrid"></div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="glass-card">
+                <div class="glass-card-title">🏆 Achievements</div>
+                <div class="achv-grid" id="lqAchvGrid"></div>
+            </div>
+
         </div>
     </div>
 
@@ -1434,6 +1799,18 @@
 
             <!-- Danger zone -->
             <div class="config-section">
+                <div class="config-section-title">🎁 Redeem Code</div>
+                <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px;">Have a promo code? Enter it here for bonus coins.</div>
+                <div class="add-subject-row">
+                    <input class="add-subject-input" id="redeemCodeInput" placeholder="Enter code…"
+                        maxlength="40" autocomplete="off" autocapitalize="off"
+                        onkeydown="if(event.key==='Enter') redeemCode()">
+                    <button class="add-subject-btn" onclick="redeemCode()">Redeem</button>
+                </div>
+                <div id="redeemCodeMsg" style="font-size:0.78rem;margin-top:8px;display:none;"></div>
+            </div>
+
+            <div class="config-section">
                 <div class="config-section-title">⚠️ Data</div>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;">
                     <button class="btn btn-export" onclick="exportData()" style="flex:1;min-width:140px;">
@@ -1450,6 +1827,16 @@
                 <button class="config-save-btn" onclick="saveConfig()">💾 Save Settings</button>
             </div>
         </div>
+    </div>
+
+    <!-- ── TAB: ARCADE ── -->
+    <div class="tab-panel" id="panel-arcade">
+        <div id="arcadeRoot"></div>
+    </div>
+
+    <!-- ── TAB: PROFILE ── -->
+    <div class="tab-panel" id="panel-profile">
+        <div id="profileRoot"></div>
     </div>
 </div>
 
@@ -1490,44 +1877,32 @@
 <!-- ── Bottom Navigation (fixed, mobile-first) ── -->
 <nav class="bottom-nav" id="bottomNav">
     <div class="bottom-nav-inner" id="bottomNavInner">
-        <button class="nav-btn" id="tab-home" onclick="switchTab('home')">
+        <button class="nav-btn active" id="tab-home" onclick="switchTab('home')">
             <span class="nav-btn-icon">🏠</span>
             <span class="nav-btn-label">Home</span>
         </button>
-        <button class="nav-btn active" id="tab-chat" onclick="switchTab('chat')">
-            <span class="nav-btn-icon">🤖</span>
-            <span class="nav-btn-label">AI</span>
-        </button>
         <button class="nav-btn" id="tab-tasks" onclick="switchTab('tasks')">
-            <span class="nav-btn-icon">📋</span>
+            <span class="nav-btn-icon">✅</span>
             <span class="nav-btn-label">Tasks</span>
             <span class="nav-btn-badge" id="tasksBadge" style="display:none;">0</span>
         </button>
+        <button class="nav-btn" id="tab-arcade" onclick="switchTab('arcade')">
+            <span class="nav-btn-icon">🎮</span>
+            <span class="nav-btn-label">Arcade</span>
+        </button>
         <button class="nav-btn" id="tab-progress" onclick="switchTab('progress')">
             <span class="nav-btn-icon">📊</span>
-            <span class="nav-btn-label">Insights</span>
+            <span class="nav-btn-label">Progress</span>
         </button>
-        <button class="nav-btn" id="tab-more" onclick="toggleMoreSheet()">
-            <span class="nav-btn-icon">⋯</span>
-            <span class="nav-btn-label">More</span>
+        <button class="nav-btn" id="tab-profile" onclick="switchTab('profile')">
+            <span class="nav-btn-icon">⚙️</span>
+            <span class="nav-btn-label">Profile</span>
         </button>
     </div>
 </nav>
 
-<!-- ── More sheet (holds overflow tabs: Habits / Health / Expenses / Settings) ── -->
-<div class="more-overlay" id="moreOverlay" onclick="closeMoreSheet()"></div>
-<div class="more-sheet" id="moreSheet">
-    <div class="more-sheet-handle"></div>
-    <div class="more-sheet-title">More</div>
-    <div class="more-grid" id="moreGrid">
-        <div class="more-item" id="more-config" role="button" tabindex="0" onclick="selectMoreItem('config')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectMoreItem('config');}">
-            <div class="more-item-icon">⚙️</div>
-            <div class="more-item-label">Settings</div>
-        </div>
-    </div>
-</div>
-
 <div class="toast" id="toast"></div>
+<div class="lq-reward-overlay" id="lqRewardOverlay"></div>
 
 <script>
     const STORAGE_KEY = 'planner_tasks_v3';
@@ -1590,6 +1965,7 @@
         return {
             id,
             category: getField(id, 'category') || 'study',
+            taskType: getField(id, 'taskType') || 'daily',
             date: getField(id, 'date'),
             timeFrom: getField(id, 'timeFrom'),
             timeTo: getField(id, 'timeTo'),
@@ -1647,6 +2023,40 @@
         const opts = cats.map(c => `<option value="${c}" ${current===c?'selected':''}>${catMeta(c).icon} ${catMeta(c).label}</option>`).join('');
         return `<select class="cat-pill ${catMeta(current).class}" id="${id}_category" onchange="onCategoryChange(${id})">${opts}</select>`;
     }
+
+    /* Task TYPE is independent of category — it's about the *rhythm* of the
+       entry (one-off daily task vs. a habit vs. a longer-term goal vs. a
+       recurring activity), separate from *what kind* of entry it is. */
+    const TASK_TYPES = [
+        { id: 'daily',     icon: '📅', label: 'Daily Task' },
+        { id: 'habit',     icon: '🌱', label: 'Habit' },
+        { id: 'goal',      icon: '🎯', label: 'Goal' },
+        { id: 'recurring', icon: '🔁', label: 'Recurring' },
+    ];
+    function taskTypeRowHtml(id, current){
+        current = current || 'daily';
+        return `
+            <input type="hidden" id="${id}_taskType" value="${current}">
+            <div class="task-type-row">
+                ${TASK_TYPES.map(t => `
+                    <span class="task-type-pill ${t.id === current ? 'active' : ''}"
+                        onclick="setTaskType(${id}, '${t.id}')">${t.icon} ${t.label}</span>
+                `).join('')}
+            </div>
+        `;
+    }
+    function setTaskType(id, type){
+        const input = document.getElementById(`${id}_taskType`);
+        if (input) input.value = type;
+        const row = input ? input.parentElement : null;
+        if (row) {
+            row.querySelectorAll('.task-type-pill').forEach((pill, i) => {
+                pill.classList.toggle('active', TASK_TYPES[i].id === type);
+            });
+        }
+        saveToStorage();
+    }
+    window.setTaskType = setTaskType;
 
     function fieldsForCategory(id, data) {
         const cat = data.category || 'study';
@@ -1924,6 +2334,7 @@
                             </div>
                             <button class="btn-delete" onclick="deleteTask(${id})">✕ Remove</button>
                         </div>
+                        ${taskTypeRowHtml(id, data.taskType)}
                         <div class="field-grid" id="${id}_fields">
                             ${fieldsForCategory(id, data)}
                         </div>
@@ -3333,7 +3744,43 @@
     .qc-fitness  .home-quick-icon { background: rgba(76,220,159,0.16); color: #5be8aa; }
     .qc-finance  .home-quick-icon { background: rgba(255,209,102,0.16); color: #ffd87a; }
     .qc-routine  .home-quick-icon { background: rgba(86,189,255,0.16); color: #7fd4ff; }
-    .qc-tasks:hover, .qc-learning:hover, .qc-health:hover, .qc-fitness:hover, .qc-finance:hover, .qc-routine:hover { border-color: rgba(181,131,255,0.35); }
+    .qc-arcade   .home-quick-icon { background: rgba(245,200,75,0.18); color: var(--coin); }
+    .qc-ai       .home-quick-icon { background: rgba(124,92,255,0.18); color: var(--xp-light); }
+    .qc-tasks:hover, .qc-learning:hover, .qc-health:hover, .qc-fitness:hover, .qc-finance:hover, .qc-routine:hover, .qc-arcade:hover, .qc-ai:hover { border-color: rgba(181,131,255,0.35); }
+
+    /* ── Coin badge (Home header) ── */
+    .home-greeting-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .home-coin-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: linear-gradient(135deg, rgba(245,200,75,0.2), rgba(245,200,75,0.08));
+        border: 1px solid rgba(245,200,75,0.4); border-radius: 999px;
+        padding: 7px 12px; font-size: 0.82rem; font-weight: 700; color: var(--coin);
+        cursor: pointer; transition: transform 0.15s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .home-coin-badge:active { transform: scale(0.94); }
+    .home-coin-badge .coin-ic { filter: drop-shadow(0 0 4px rgba(245,200,75,0.6)); }
+
+    /* ── LifeQuest level/XP card (Home) ── */
+    .home-lq-card {
+        display: flex; align-items: center; gap: 12px;
+        background: linear-gradient(135deg, rgba(124,92,255,0.14), rgba(123,44,191,0.1));
+        border: 1px solid rgba(124,92,255,0.3); border-radius: 18px;
+        padding: 12px 14px; margin-bottom: 14px; cursor: pointer;
+        transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent;
+    }
+    .home-lq-card:active { transform: scale(0.98); }
+    .home-lq-level {
+        flex-shrink: 0; font-size: 0.78rem; font-weight: 800; color: #fff;
+        background: linear-gradient(135deg, var(--xp), #b583ff);
+        border-radius: 10px; padding: 7px 10px; box-shadow: 0 3px 10px rgba(124,92,255,0.4);
+    }
+    .home-lq-body { flex: 1; min-width: 0; }
+    .home-lq-top { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; }
+    .home-lq-top span:first-child { color: var(--text-main); font-weight: 600; }
+    .home-lq-coingo { color: var(--xp-light); font-weight: 700; }
+    .home-lq-bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .home-lq-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--xp), var(--accent-light)); transition: width 0.5s cubic-bezier(.22,1,.36,1); }
 
     .home-progress-track { height: 8px; background: rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; }
     .home-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); transition: width 0.4s ease; }
@@ -3599,7 +4046,34 @@
                     <div class="hi" id="homeGreetingHi">Good morning, <span id="homeGreetingName">there</span> 👋</div>
                     <div class="sub" id="homeGreetingSub">Here's how today is shaping up</div>
                 </div>
-                <div class="home-avatar">🪐</div>
+                <div class="home-greeting-right">
+                    <div class="home-coin-badge" id="homeCoinBadge" onclick="window.switchTab('arcade')" title="Coin balance — tap to open Arcade">
+                        <span class="coin-ic">🪙</span><b id="homeCoinValue">0</b>
+                    </div>
+                    <div class="home-avatar">🪐</div>
+                </div>
+            </div>
+
+            <button class="home-quickstart-btn" id="homeQuickStartBtn" onclick="window.__lqQuickStart()">
+                <span>⚡</span><span>Quick Start</span>
+            </button>
+
+            <div class="home-stat-row">
+                <div class="home-stat-chip is-streak">
+                    <div class="hsc-icon">🔥</div>
+                    <div class="hsc-value" id="homeStatStreak">0</div>
+                    <div class="hsc-label">Streak</div>
+                </div>
+                <div class="home-stat-chip">
+                    <div class="hsc-icon">✅</div>
+                    <div class="hsc-value" id="homeStatTasksToday">0</div>
+                    <div class="hsc-label">Today</div>
+                </div>
+                <div class="home-stat-chip">
+                    <div class="hsc-icon">⭐</div>
+                    <div class="hsc-value" id="homeStatLevel">1</div>
+                    <div class="hsc-label">Level</div>
+                </div>
             </div>
 
             <div class="home-hero">
@@ -3628,6 +4102,22 @@
                         <div class="hh-stat"><b id="homeHeroStreak">0</b>day streak</div>
                     </div>
                 </div>
+            </div>
+
+            <div class="home-lq-card" id="homeLqCard" onclick="window.switchTab('arcade')">
+                <div class="home-lq-level" id="homeLqLevel">Lv 1</div>
+                <div class="home-lq-body">
+                    <div class="home-lq-top">
+                        <span id="homeLqXpLabel">0 / 50 XP</span>
+                        <span class="home-lq-coingo">Spend in Arcade →</span>
+                    </div>
+                    <div class="home-lq-bar"><div class="home-lq-fill" id="homeLqFill"></div></div>
+                </div>
+            </div>
+
+            <div class="home-section-title">Recent Achievements</div>
+            <div class="home-achv-row" id="homeAchvRow">
+                <div class="home-achv-empty">Complete tasks to start unlocking achievements.</div>
             </div>
 
             <div class="home-ai-card">
@@ -3672,29 +4162,32 @@
                     <div class="home-quick-name">Habits</div>
                     <div class="home-quick-meta" id="qcRoutineMeta">0 logged today</div>
                 </div>
+                <div class="home-quick-card qc-arcade" onclick="window.switchTab('arcade')">
+                    <div class="home-quick-icon">🎮</div>
+                    <div class="home-quick-name">Arcade</div>
+                    <div class="home-quick-meta" id="qcArcadeMeta">0 🪙 to spend</div>
+                </div>
+                <div class="home-quick-card qc-ai" onclick="window.switchTab('chat')">
+                    <div class="home-quick-icon">🤖</div>
+                    <div class="home-quick-name">AI Assistant</div>
+                    <div class="home-quick-meta">Log anything by chat</div>
+                </div>
             </div>
         `;
         const dash = document.querySelector('.dashboard');
         if (dash) dash.appendChild(panel);
     }
 
-    /* ── More sheet controls ───────────────────────────────────────── */
-    const MORE_TABS = ['config']; // grows as habits/health/expenses register themselves
-    function toggleMoreSheet(){
-        const sheet = document.getElementById('moreSheet');
-        if (sheet.classList.contains('show')) closeMoreSheet();
-        else openMoreSheet();
-    }
-    function openMoreSheet(){
-        document.getElementById('moreOverlay').classList.add('show');
-        document.getElementById('moreSheet').classList.add('show');
-        document.addEventListener('keydown', onMoreKeydown);
-    }
-    function closeMoreSheet(){
-        document.getElementById('moreOverlay').classList.remove('show');
-        document.getElementById('moreSheet').classList.remove('show');
-        document.removeEventListener('keydown', onMoreKeydown);
-    }
+    /* ── "More" grid controls ──────────────────────────────────────────
+       Originally a popup sheet triggered by its own nav button. LifeQuest's
+       5-tab nav has no room for a 6th icon, so this grid now renders inline
+       inside the Profile tab instead — selectMoreItem/registerMoreItem keep
+       their names so habits/health/expenses (added later in this file)
+       don't need to change how they register themselves. ── */
+    const MORE_TABS = ['config', 'chat']; // grows as habits/health/expenses register themselves
+    function toggleMoreSheet(){ /* popup retired — items now live inline in Profile */ }
+    function openMoreSheet(){ /* popup retired — items now live inline in Profile */ }
+    function closeMoreSheet(){ /* popup retired — items now live inline in Profile */ }
     function onMoreKeydown(e){ if (e.key === 'Escape') closeMoreSheet(); }
     function selectMoreItem(name){
         closeMoreSheet();
@@ -3770,7 +4263,8 @@
     window.fabAction = fabAction;
 
     function registerMoreItem(name, icon, label){
-        const grid = document.getElementById('moreGrid');
+        if (!MORE_TABS.includes(name)) MORE_TABS.push(name);
+        const grid = document.getElementById('profileMoreGrid') || document.getElementById('moreGrid');
         if (!grid || document.getElementById('more-' + name)) return;
         const item = document.createElement('div');
         item.className = 'more-item';
@@ -3783,31 +4277,41 @@
         // Keep Settings last
         const settings = document.getElementById('more-config');
         if (settings) grid.insertBefore(item, settings); else grid.appendChild(item);
-        if (!MORE_TABS.includes(name)) MORE_TABS.push(name);
     }
     window.registerMoreItem = registerMoreItem;
 
     function switchTabExt(name){
+        // If a game is currently mounted in Arcade and we're navigating
+        // away from it, stop its timers/listeners first so nothing keeps
+        // running (or capturing keyboard input) in the background.
+        if (name !== 'arcade') {
+            const host = document.getElementById('arcadeGameHost');
+            if (host && typeof host.__snakeTeardown === 'function') host.__snakeTeardown();
+            document.body.classList.remove('lq-game-fullscreen');
+        }
         // Deactivate all bottom-nav buttons, more-sheet items, and panels
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.more-item').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         const isMoreTab = MORE_TABS.includes(name);
-        const tabBtn = isMoreTab ? document.getElementById('tab-more') : document.getElementById('tab-' + name);
+        const tabBtn = isMoreTab ? document.getElementById('tab-profile') : document.getElementById('tab-' + name);
         const moreItem = document.getElementById('more-' + name);
         const panel = document.getElementById('panel-' + name);
         if (tabBtn) tabBtn.classList.add('active');
         if (moreItem) moreItem.classList.add('active');
-        const navMore = document.getElementById('tab-more');
-        if (navMore) navMore.classList.toggle('more-has-active', isMoreTab);
+        const navProfile = document.getElementById('tab-profile');
+        if (navProfile) navProfile.classList.toggle('more-has-active', isMoreTab && name !== 'profile');
         if (panel) panel.classList.add('active');
         if (name === 'progress' && window.updateProgress) window.updateProgress();
+        if (name === 'progress' && window.renderLqProgress) window.renderLqProgress();
         if (name === 'config' && !window.configUnlocked) {
             const li = document.getElementById('lockInput'); if (li) li.value = '';
             const le = document.getElementById('lockError'); if (le) le.textContent = '';
         }
-        if (name === 'home') renderHome();
+        if (name === 'home') { renderHome(); if (window.LQ && typeof renderHomeWallet === 'function') renderHomeWallet(); }
         if (name === 'chat') { renderAiHome(); maybeGreetInChat(); }
+        if (name === 'profile' && window.renderProfile) window.renderProfile();
+        if (name === 'arcade' && window.renderArcade) window.renderArcade();
     }
     window.switchTab = switchTabExt;
 
@@ -5546,5 +6050,2663 @@
     });
 })();
 </script>
+
+<!-- ====================================================================
+     LifeQuest — Coins, XP & Arcade
+     Adds the shared wallet that turns real-life task/habit/goal
+     completion into coins + XP, a Profile screen (stats + the former
+     "More" links), and the Arcade tab where coins get spent on games.
+     Snake is the first game; the registry below makes it easy to slot
+     in Sudoku / Memory Match / Pong / Brick Breaker later — each just
+     needs an entry in GAMES and a render function.
+     ==================================================================== -->
+<script>
+(function(){
+    const LQ_KEY = 'lifequest_wallet_v2';
+
+    /* ── XP curve ─────────────────────────────────────────────────────
+       Lv1=0, Lv2=100, Lv3=250, Lv4=500 (as specified), then the gap
+       between levels keeps growing by +100 each time: 450, 550, 650...
+       gapToNext(1)=100, gapToNext(2)=150, gapToNext(n)=150+(n-2)*100 for n>=3 */
+    function lqGapToNext(level){
+        if (level <= 1) return 100;
+        if (level === 2) return 150;
+        return 150 + (level - 2) * 100;
+    }
+    function lqXpNeeded(level){ return lqGapToNext(level); }
+
+    const LQ_DEFAULT = {
+        coins: 0,
+        xp: 0,
+        level: 1,
+        totalXp: 0,
+        totalCoinsEarned: 0,
+        totalCoinsSpent: 0,
+        tasksCompleted: 0,
+        tasksCompletedToday: 0,
+        habitsCompleted: 0,
+        goalsLogged: 0,
+        gamesPlayed: 0,
+        highestSnakeScore: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        lastActiveDay: null,     // 'YYYY-MM-DD' — last calendar day the app was opened
+        lastTasksResetDay: null, // 'YYYY-MM-DD' — last day tasksCompletedToday was zeroed
+        gamesUnlocked: ['snake'],
+        achievements: {},        // { achievementId: timestamp }
+        redeemedCodes: [],       // promo codes already claimed, so each can only be used once
+        log: []   // recent earn events, newest first: {text, coins, xp, time}
+    };
+
+    function lqLoad(){
+        try {
+            const raw = JSON.parse(localStorage.getItem(LQ_KEY));
+            if (!raw || typeof raw !== 'object') return Object.assign({}, LQ_DEFAULT, { log: [], achievements: {}, redeemedCodes: [] });
+            return Object.assign({}, LQ_DEFAULT, raw, {
+                log: Array.isArray(raw.log) ? raw.log : [],
+                achievements: (raw.achievements && typeof raw.achievements === 'object') ? raw.achievements : {},
+                redeemedCodes: Array.isArray(raw.redeemedCodes) ? raw.redeemedCodes : []
+            });
+        } catch(e){ return Object.assign({}, LQ_DEFAULT, { log: [], achievements: {}, redeemedCodes: [] }); }
+    }
+    function lqSave(w){ try { localStorage.setItem(LQ_KEY, JSON.stringify(w)); } catch(e){} }
+
+    let wallet = lqLoad();
+
+    function lqToday(){
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+    function lqDaysBetween(a, b){
+        // a, b are 'YYYY-MM-DD' strings
+        const da = new Date(a + 'T00:00:00');
+        const db = new Date(b + 'T00:00:00');
+        return Math.round((db - da) / 86400000);
+    }
+
+    function lqNotify(){
+        document.dispatchEvent(new CustomEvent('lq:update'));
+    }
+
+    /* ── Reward animation ────────────────────────────────────────────
+       A short-lived floating card, used for every coin/XP/achievement
+       reward so the moment always feels celebratory rather than just
+       a toast. Falls back silently if the overlay root isn't there yet. */
+    function lqPlayRewardAnimation(opts){
+        const root = document.getElementById('lqRewardOverlay');
+        if (!root) return;
+        const card = document.createElement('div');
+        card.className = 'lq-reward-card';
+        const bits = [];
+        if (opts.coins) bits.push(`<span class="lq-reward-pill lq-reward-coin">+${opts.coins} 🪙</span>`);
+        if (opts.xp) bits.push(`<span class="lq-reward-pill lq-reward-xp">+${opts.xp} XP</span>`);
+        card.innerHTML = `
+            <div class="lq-reward-icon">${opts.icon || '✨'}</div>
+            <div class="lq-reward-body">
+                <div class="lq-reward-title">${opts.title}</div>
+                ${bits.length ? `<div class="lq-reward-pills">${bits.join('')}</div>` : ''}
+            </div>
+        `;
+        root.appendChild(card);
+        requestAnimationFrame(() => card.classList.add('show'));
+        setTimeout(() => {
+            card.classList.remove('show');
+            card.classList.add('out');
+            setTimeout(() => card.remove(), 380);
+        }, 2200);
+    }
+    window.lqPlayRewardAnimation = lqPlayRewardAnimation;
+
+    /* ── Award / spend ───────────────────────────────────────────────── */
+    function lqAward(coins, xp, label, opts){
+        opts = opts || {};
+        let leveledUp = false;
+        let newLevel = wallet.level;
+        if (coins) { wallet.coins += coins; wallet.totalCoinsEarned += coins; }
+        if (xp) {
+            wallet.xp += xp;
+            wallet.totalXp += xp;
+            let need = lqXpNeeded(wallet.level);
+            while (wallet.xp >= need) {
+                wallet.xp -= need;
+                wallet.level += 1;
+                leveledUp = true;
+                need = lqXpNeeded(wallet.level);
+            }
+            newLevel = wallet.level;
+        }
+        if (label) {
+            wallet.log.unshift({ text: label, coins: coins||0, xp: xp||0, time: Date.now() });
+            wallet.log = wallet.log.slice(0, 30);
+        }
+        lqSave(wallet);
+        lqNotify();
+        if (!opts.silent && (coins || xp)) {
+            lqPlayRewardAnimation({ title: label, coins, xp, icon: opts.icon });
+        }
+        if (leveledUp) {
+            lqPlayRewardAnimation({ title: `Level Up! You're now Lv ${newLevel}`, icon: '⬆️' });
+            lqCheckAchievement('level5', newLevel >= 5);
+        }
+        return { leveledUp, newLevel };
+    }
+
+    function lqSpend(coins){
+        if (wallet.coins < coins) return false;
+        wallet.coins -= coins;
+        wallet.totalCoinsSpent += coins;
+        lqSave(wallet);
+        lqNotify();
+        return true;
+    }
+
+    /* ── Achievements ─────────────────────────────────────────────────
+       Stored as { id: timestamp } inside the same localStorage wallet
+       object. unlock() is idempotent and fires the reward animation
+       once, the first time each condition becomes true. ── */
+    const ACHIEVEMENT_DEFS = {
+        firstTask:     { name: 'First Task Completed', icon: '✅', desc: 'Complete your first task' },
+        streak7:       { name: '7-Day Streak',          icon: '🔥', desc: 'Keep a 7-day streak going' },
+        firstSnake:    { name: 'First Snake Game',      icon: '🐍', desc: 'Play your first game of Snake' },
+        snake100:      { name: 'Score 100 in Snake',    icon: '🏆', desc: 'Score at least 100 in one Snake run' },
+        level5:        { name: 'Level 5 Reached',       icon: '⭐', desc: 'Reach player level 5' },
+        tasks100:      { name: 'Complete 100 Tasks',    icon: '💯', desc: 'Complete 100 tasks in total' },
+    };
+    function lqCheckAchievement(id, conditionMet){
+        if (!conditionMet || wallet.achievements[id]) return;
+        wallet.achievements[id] = Date.now();
+        lqSave(wallet);
+        const def = ACHIEVEMENT_DEFS[id];
+        lqPlayRewardAnimation({ title: `Achievement: ${def.name}`, icon: def.icon });
+        lqNotify();
+    }
+
+    /* ── Streaks & daily login ───────────────────────────────────────
+       Called once per app load. Advances the streak if "yesterday" was
+       the last active day, resets it if a day was missed, and pays out
+       the daily-login / 7-day / 30-day streak bonuses at most once per
+       calendar day each. ── */
+    function lqHandleDailyLogin(){
+        const today = lqToday();
+        if (wallet.lastActiveDay === today) return; // already handled today
+
+        if (wallet.lastActiveDay) {
+            const gap = lqDaysBetween(wallet.lastActiveDay, today);
+            if (gap === 1) wallet.currentStreak += 1;
+            else if (gap > 1) wallet.currentStreak = 1;
+            // gap <= 0 (clock skew) — leave streak untouched
+        } else {
+            wallet.currentStreak = 1;
+        }
+        wallet.longestStreak = Math.max(wallet.longestStreak, wallet.currentStreak);
+        wallet.lastActiveDay = today;
+        lqSave(wallet);
+
+        lqAward(5, 0, 'Daily login', { icon: '📅' });
+        lqCheckAchievement('streak7', wallet.currentStreak >= 7);
+        if (wallet.currentStreak === 7) lqAward(50, 0, '7-day streak bonus', { icon: '🔥' });
+        if (wallet.currentStreak === 30) lqAward(250, 0, '30-day streak bonus', { icon: '🔥' });
+
+        // Tasks-completed-today counter resets once per calendar day, but
+        // only when there's an actual day boundary, not on first-ever load.
+        if (wallet.lastTasksResetDay !== today) {
+            wallet.tasksCompletedToday = 0;
+            wallet.lastTasksResetDay = today;
+            lqSave(wallet);
+        }
+        lqNotify();
+    }
+
+    // Public wallet API — the embedded Snake module and the rest of the
+    // app read/write through this instead of separate ad-hoc storage.
+    window.LQ = {
+        get: () => ({ coins: wallet.coins, xp: wallet.xp, level: wallet.level, xpNeeded: lqXpNeeded(wallet.level) }),
+        award: (coins, xp, label, opts) => lqAward(coins, xp, label, opts),
+        spend: (coins) => lqSpend(coins),
+        unlockGame: (id) => {
+            if (!wallet.gamesUnlocked.includes(id)) { wallet.gamesUnlocked.push(id); lqSave(wallet); lqNotify(); }
+        },
+        isGameUnlocked: (id) => wallet.gamesUnlocked.includes(id),
+        stats: () => ({
+            tasksCompleted: wallet.tasksCompleted,
+            tasksCompletedToday: wallet.tasksCompletedToday,
+            habitsCompleted: wallet.habitsCompleted,
+            goalsLogged: wallet.goalsLogged,
+            gamesPlayed: wallet.gamesPlayed,
+            highestSnakeScore: wallet.highestSnakeScore,
+            currentStreak: wallet.currentStreak,
+            longestStreak: wallet.longestStreak,
+            totalCoinsEarned: wallet.totalCoinsEarned,
+            totalCoinsSpent: wallet.totalCoinsSpent,
+            totalXp: wallet.totalXp,
+            log: wallet.log
+        }),
+        achievements: () => ACHIEVEMENT_DEFS && Object.keys(ACHIEVEMENT_DEFS).map(id => ({
+            id, ...ACHIEVEMENT_DEFS[id], unlocked: !!wallet.achievements[id], unlockedAt: wallet.achievements[id] || null
+        })),
+        recordGamePlayed: (game) => { wallet.gamesPlayed += 1; lqSave(wallet); lqCheckAchievement('firstSnake', game === 'snake'); },
+        recordSnakeScore: (score) => {
+            if (score > wallet.highestSnakeScore) { wallet.highestSnakeScore = score; lqSave(wallet); }
+            lqCheckAchievement('snake100', score >= 100);
+        },
+        bumpStat: (key) => { if (key in wallet && typeof wallet[key] === 'number') { wallet[key] += 1; lqSave(wallet); } }
+    };
+
+    /* ── Reward rules ───────────────────────────────────────────────
+       Kept small and explicit so it's obvious what earns what. ── */
+    const REWARD_TASK_DONE   = { coins: 10, xp: 5  };
+    const REWARD_HABIT_DONE  = { coins: 15, xp: 10 };
+    const REWARD_GOAL_LOGGED = { coins: 6,  xp: 10 };
+    const REWARD_EXPENSE_LOGGED = { coins: 1, xp: 1 }; // small nudge for tracking discipline
+
+    /* Avoid double-rewarding the same task if its status is toggled
+       Done -> something else -> Done again in the same session, or if
+       it was already Done when the app loaded (re-render shouldn't pay). */
+    const rewardedTaskIds = new Set();
+
+    function isDoneStatus(status){ return /Done/.test(status || ''); }
+
+    /* Seed rewardedTaskIds from tasks that are *already* Done at load,
+       so re-rendering / re-saving them never re-pays. New completions
+       after this point still go through hookTaskCompletion(). */
+    function seedRewardedFromExisting(){
+        if (!Array.isArray(window.tasks) || typeof window.readTaskData !== 'function') return;
+        window.tasks.forEach(id => {
+            const t = window.readTaskData(id);
+            if (isDoneStatus(t.status)) rewardedTaskIds.add(id);
+        });
+    }
+
+    function recordTaskCompleted(taskType){
+        wallet.tasksCompleted += 1;
+        wallet.tasksCompletedToday += 1;
+        lqSave(wallet);
+        lqCheckAchievement('firstTask', wallet.tasksCompleted >= 1);
+        lqCheckAchievement('tasks100', wallet.tasksCompleted >= 100);
+        // A task tagged "Habit" via the type selector pays the habit rate
+        // (+15 coins / +10 XP) instead of the flat task rate, since it's
+        // functionally the same recurring-completion behaviour the
+        // dedicated Habits panel rewards.
+        if (taskType === 'habit') {
+            wallet.habitsCompleted += 1;
+            lqSave(wallet);
+            lqAward(REWARD_HABIT_DONE.coins, REWARD_HABIT_DONE.xp, 'Habit completed', { icon: '🌱' });
+        } else {
+            lqAward(REWARD_TASK_DONE.coins, REWARD_TASK_DONE.xp, 'Task completed', { icon: '✅' });
+        }
+    }
+
+    function recordHabitCompleted(){
+        wallet.habitsCompleted += 1;
+        lqSave(wallet);
+        lqAward(REWARD_HABIT_DONE.coins, REWARD_HABIT_DONE.xp, 'Habit completed', { icon: '🌱' });
+    }
+
+    function hookTaskCompletion(){
+        // markTaskDone() — the swipe-to-complete / checkmark action
+        if (window.markTaskDone && !window.markTaskDone.__lqWrapped) {
+            const orig = window.markTaskDone;
+            window.markTaskDone = function(id){
+                const r = orig.apply(this, arguments);
+                if (!rewardedTaskIds.has(id)) {
+                    rewardedTaskIds.add(id);
+                    const t = (typeof window.readTaskData === 'function') ? window.readTaskData(id) : {};
+                    recordTaskCompleted(t.taskType);
+                }
+                return r;
+            };
+            window.markTaskDone.__lqWrapped = true;
+        }
+        // saveToStorage() also fires on every field edit, including manually
+        // switching a task's status dropdown to "✅ Done" — catch that path too.
+        if (window.saveToStorage && !window.saveToStorage.__lqWrapped) {
+            const orig = window.saveToStorage;
+            window.saveToStorage = function(){
+                const r = orig.apply(this, arguments);
+                if (Array.isArray(window.tasks) && typeof window.readTaskData === 'function') {
+                    window.tasks.forEach(id => {
+                        const t = window.readTaskData(id);
+                        if (isDoneStatus(t.status) && !rewardedTaskIds.has(id)) {
+                            rewardedTaskIds.add(id);
+                            recordTaskCompleted(t.taskType);
+                        } else if (!isDoneStatus(t.status) && rewardedTaskIds.has(id)) {
+                            // status reverted away from Done — allow re-earning if completed again
+                            rewardedTaskIds.delete(id);
+                        }
+                    });
+                }
+                return r;
+            };
+            window.saveToStorage.__lqWrapped = true;
+        }
+    }
+
+    function hookHabitCompletion(){
+        if (window.__habitToggle && !window.__habitToggle.__lqWrapped) {
+            const orig = window.__habitToggle;
+            window.__habitToggle = function(id){
+                // We can't see the "done" state from here directly, so compare
+                // before/after via window.tasks-style read isn't available for
+                // habits; instead just peek at the DOM button state after orig runs.
+                const r = orig.apply(this, arguments);
+                const btn = document.querySelector(`.habit-btn[onclick="window.__habitToggle('${id}')"]`);
+                if (btn && btn.classList.contains('done')) {
+                    recordHabitCompleted();
+                }
+                return r;
+            };
+            window.__habitToggle.__lqWrapped = true;
+        }
+        // Chat-logged habits ("meditation done") via logHabit(name, completed)
+        if (window.logHabit && !window.logHabit.__lqWrapped) {
+            const orig = window.logHabit;
+            window.logHabit = function(name, completed){
+                const r = orig.apply(this, arguments);
+                if (completed) recordHabitCompleted();
+                return r;
+            };
+            window.logHabit.__lqWrapped = true;
+        }
+    }
+
+    function hookGoalAndExpense(){
+        if (window.logGoal && !window.logGoal.__lqWrapped) {
+            const orig = window.logGoal;
+            window.logGoal = function(title){
+                const r = orig.apply(this, arguments);
+                wallet.goalsLogged += 1; lqSave(wallet);
+                lqAward(REWARD_GOAL_LOGGED.coins, REWARD_GOAL_LOGGED.xp, 'Goal set');
+                return r;
+            };
+            window.logGoal.__lqWrapped = true;
+        }
+        if (window.logExpense && !window.logExpense.__lqWrapped) {
+            const orig = window.logExpense;
+            window.logExpense = function(amount, description){
+                const r = orig.apply(this, arguments);
+                lqAward(REWARD_EXPENSE_LOGGED.coins, REWARD_EXPENSE_LOGGED.xp, 'Expense logged');
+                return r;
+            };
+            window.logExpense.__lqWrapped = true;
+        }
+    }
+
+    /* ── Promo / redeem codes ───────────────────────────────────────────
+       Settings → "Redeem Code". Each code can only be claimed once per
+       device (tracked in wallet.redeemedCodes). Two ways a code can pay out:
+
+       1. Pattern codes — "Sushrut" followed by any number of digits, e.g.
+          Sushrut100, Sushrut10000, Sushrut267 — award exactly that many
+          coins. Case-sensitive: the prefix must match "Sushrut" exactly.
+       2. Fixed codes — exact strings in PROMO_CODES below, each worth a
+          specific amount and nothing else. PLAY1000 is one of these: it's
+          a literal string match, not a pattern, so "PLAY100" or any other
+          PLAY-prefixed value simply isn't in the table and is rejected as
+          an invalid code — only the exact string "PLAY1000" pays out. */
+    const PROMO_PATTERN = /^Sushrut(\d+)$/;
+    const PROMO_CODES = {
+        'PLAY1000': { coins: 1000, xp: 0, label: 'Promo code: PLAY1000' },
+    };
+
+    function redeemCode(){
+        const input = document.getElementById('redeemCodeInput');
+        const msgEl = document.getElementById('redeemCodeMsg');
+        if (!input || !msgEl) return;
+        const code = input.value.trim();
+        const showMsg = (text, ok) => {
+            msgEl.textContent = text;
+            msgEl.style.display = 'block';
+            msgEl.style.color = ok ? '#4cdc9f' : '#ff6b6b';
+        };
+        if (!code) { showMsg('Enter a code first.', false); return; }
+        if (wallet.redeemedCodes.includes(code)) { showMsg('⚠️ This code has already been redeemed.', false); return; }
+
+        let def = null;
+        const match = code.match(PROMO_PATTERN);
+        if (match) {
+            const coins = parseInt(match[1], 10);
+            if (Number.isFinite(coins) && coins > 0 && coins <= 1000000) {
+                def = { coins, xp: 0, label: `Promo code: ${code}` };
+            } else {
+                showMsg('❌ That code is out of range.', false);
+                return;
+            }
+        } else if (PROMO_CODES[code]) {
+            def = PROMO_CODES[code];
+        }
+
+        if (!def) { showMsg('❌ Invalid code.', false); return; }
+
+        wallet.redeemedCodes.push(code);
+        lqSave(wallet);
+        lqAward(def.coins, def.xp, def.label, { icon: '🎁' });
+        showMsg(`✅ Redeemed! +${def.coins} 🪙${def.xp ? ` +${def.xp} XP` : ''} added to your Arcade balance.`, true);
+        input.value = '';
+    }
+    window.redeemCode = redeemCode;
+
+    window.__lqQuickStart = function(){
+        if (window.fabAction) window.fabAction('tasks');
+        else if (window.switchTab) window.switchTab('tasks');
+    };
+
+    /* ── Home tab: coin badge + level/XP strip + streak/today/achievements ── */
+    function renderHomeWallet(){
+        const w = window.LQ.get();
+        const s = window.LQ.stats();
+        const coinEl = document.getElementById('homeCoinValue'); if (coinEl) coinEl.textContent = w.coins;
+        const lvlEl = document.getElementById('homeLqLevel'); if (lvlEl) lvlEl.textContent = `Lv ${w.level}`;
+        const xpLbl = document.getElementById('homeLqXpLabel'); if (xpLbl) xpLbl.textContent = `${w.xp} / ${w.xpNeeded} XP`;
+        const fill = document.getElementById('homeLqFill');
+        if (fill) fill.style.width = Math.max(0, Math.min(100, (w.xp / w.xpNeeded) * 100)) + '%';
+        const qcArcade = document.getElementById('qcArcadeMeta');
+        if (qcArcade) qcArcade.textContent = `${w.coins} 🪙 to spend`;
+
+        const stStreak = document.getElementById('homeStatStreak'); if (stStreak) stStreak.textContent = s.currentStreak;
+        const stToday = document.getElementById('homeStatTasksToday'); if (stToday) stToday.textContent = s.tasksCompletedToday;
+        const stLevel = document.getElementById('homeStatLevel'); if (stLevel) stLevel.textContent = w.level;
+
+        const achRow = document.getElementById('homeAchvRow');
+        if (achRow && window.LQ.achievements) {
+            const unlocked = window.LQ.achievements().filter(a => a.unlocked).sort((a,b) => b.unlockedAt - a.unlockedAt);
+            achRow.innerHTML = unlocked.length
+                ? unlocked.slice(0, 8).map(a => `
+                    <div class="home-achv-chip" title="${esc(a.desc)}">
+                        <div class="ha-icon">${a.icon}</div>
+                        <div class="ha-name">${esc(a.name)}</div>
+                    </div>`).join('')
+                : `<div class="home-achv-empty">Complete tasks to start unlocking achievements.</div>`;
+        }
+    }
+    window.renderHomeWallet = renderHomeWallet;
+
+    /* ── Profile tab ─────────────────────────────────────────────────
+       Stats + level header, plus the links that used to live in the
+       popup "More" sheet (Habits / Health / Expenses / Settings). ── */
+    /* ── Shared builders: achievements grid + full stats grid ──────────
+       Used by both Profile (compact) and Progress (full detail) so the
+       two screens never drift out of sync with each other. ── */
+    function buildAchvGridHtml(){
+        if (!window.LQ || !window.LQ.achievements) return '';
+        return window.LQ.achievements().map(a => `
+            <div class="achv-card ${a.unlocked ? 'unlocked' : ''}">
+                <div class="ac-icon">${a.icon}</div>
+                <div class="ac-name">${esc(a.name)}</div>
+                <div class="ac-desc">${esc(a.desc)}</div>
+                <div class="ac-status">${a.unlocked ? '✓ Unlocked' : '🔒 Locked'}</div>
+            </div>
+        `).join('');
+    }
+
+    function buildLqStatsGridHtml(){
+        const w = window.LQ.get();
+        const s = window.LQ.stats();
+        const rows = [
+            ['✅', s.tasksCompleted, 'Tasks completed'],
+            ['🔥', s.currentStreak, 'Current streak'],
+            ['🏆', s.longestStreak, 'Longest streak'],
+            ['🪙', s.totalCoinsEarned, 'Coins earned'],
+            ['💸', s.totalCoinsSpent, 'Coins spent'],
+            ['🎮', s.gamesPlayed, 'Games played'],
+            ['🐍', s.highestSnakeScore, 'Highest Snake score'],
+            ['✨', s.totalXp, 'Total XP'],
+            ['⭐', w.level, 'Player level'],
+        ];
+        return rows.map(([icon, value, label]) => `
+            <div class="lq-stat-card">
+                <div class="lsc-value">${icon} ${value}</div>
+                <div class="lsc-label">${esc(label)}</div>
+            </div>
+        `).join('');
+    }
+
+    function renderLqProgress(){
+        const grid = document.getElementById('lqStatsGrid');
+        if (grid) grid.innerHTML = buildLqStatsGridHtml();
+        const achv = document.getElementById('lqAchvGrid');
+        if (achv) achv.innerHTML = buildAchvGridHtml();
+    }
+    window.renderLqProgress = renderLqProgress;
+
+    function renderProfile(){
+        const root = document.getElementById('profileRoot');
+        if (!root) return;
+        const w = window.LQ.get();
+        const s = window.LQ.stats();
+        const name = (typeof window.firstName === 'function') ? window.firstName() : 'there';
+        const pct = Math.max(0, Math.min(100, (w.xp / w.xpNeeded) * 100));
+
+        root.innerHTML = `
+            <div class="profile-header">
+                <div class="profile-avatar">🪐</div>
+                <div class="profile-id">
+                    <div class="profile-name">${esc(name === 'there' ? 'Your Profile' : name)}</div>
+                    <div class="profile-level-row">
+                        <span class="profile-level-chip">Lv ${w.level}</span>
+                        <div class="profile-xp-bar"><div class="profile-xp-fill" style="width:${pct}%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-stat-grid">
+                <div class="profile-stat-card"><div class="ps-icon">🪙</div><div class="ps-value">${w.coins}</div><div class="ps-label">Coins</div></div>
+                <div class="profile-stat-card"><div class="ps-icon">🔥</div><div class="ps-value">${s.currentStreak}</div><div class="ps-label">Streak</div></div>
+                <div class="profile-stat-card"><div class="ps-icon">✅</div><div class="ps-value">${s.tasksCompleted}</div><div class="ps-label">Tasks done</div></div>
+            </div>
+
+            <div class="profile-section-title">More</div>
+            <div class="more-grid" id="profileMoreGrid"></div>
+
+            <div class="profile-section-title" style="margin-top:18px;">Achievements</div>
+            <div class="achv-grid" id="profileAchvGrid"></div>
+
+            <div class="profile-section-title" style="margin-top:18px;">Recent rewards</div>
+            <div id="profileLog"></div>
+        `;
+
+        // Re-register the More items (habits/health/expenses/settings) into
+        // this freshly-rendered grid — registerMoreItem() is idempotent.
+        document.querySelectorAll('#profileMoreGrid .more-item').forEach(n => n.remove());
+        if (!document.getElementById('more-config')) {
+            // settings link always exists even before other features register
+            const settings = document.createElement('div');
+            settings.className = 'more-item'; settings.id = 'more-config';
+            settings.setAttribute('role','button'); settings.setAttribute('tabindex','0');
+            settings.onclick = () => window.selectMoreItem('config');
+            settings.innerHTML = `<div class="more-item-icon">⚙️</div><div class="more-item-label">Settings</div>`;
+            document.getElementById('profileMoreGrid').appendChild(settings);
+        }
+        if (typeof window.__reRegisterMoreItems === 'function') window.__reRegisterMoreItems();
+
+        const achvGrid = document.getElementById('profileAchvGrid');
+        if (achvGrid) achvGrid.innerHTML = buildAchvGridHtml();
+
+        const log = s.log.slice(0, 8);
+        const logBox = document.getElementById('profileLog');
+        if (logBox) {
+            logBox.innerHTML = log.length ? log.map(e => `
+                <div class="ledger-item" style="display:flex;justify-content:space-between;align-items:center;background:var(--input-bg);border:1px solid var(--border-color);border-radius:12px;padding:10px 12px;margin-bottom:7px;">
+                    <span style="font-size:0.82rem;color:var(--text-main);">${esc(e.text)}</span>
+                    <span style="font-size:0.76rem;color:var(--coin);font-weight:700;">${e.coins?`+${e.coins} 🪙`:''}${e.xp?` +${e.xp}xp`:''}</span>
+                </div>
+            `).join('') : `<div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:10px 0;">Complete a task or habit to start earning coins.</div>`;
+        }
+    }
+    window.renderProfile = renderProfile;
+
+    /* registerMoreItem() (defined earlier in the file) inserts into
+       #profileMoreGrid directly now, so habits/health/expenses re-register
+       themselves correctly each time Profile is opened fresh. We expose a
+       tiny re-trigger by remembering each registration call. */
+    const moreRegistrations = [];
+    function wrapRegisterMoreItem(){
+        if (!window.registerMoreItem || window.registerMoreItem.__lqWrapped) return;
+        const orig = window.registerMoreItem;
+        window.registerMoreItem = function(name, icon, label){
+            moreRegistrations.push([name, icon, label]);
+            return orig.apply(this, arguments);
+        };
+        window.registerMoreItem.__lqWrapped = true;
+        window.__reRegisterMoreItems = function(){
+            moreRegistrations.forEach(args => orig.apply(null, args));
+        };
+    }
+
+    /* ── Arcade tab ──────────────────────────────────────────────────
+       Game registry — add future games here once they're built. Each
+       entry just needs a render function that mounts into #arcadeGameHost. */
+    const SNAKE_ENTRY_COST = 50;
+    const GAMES = [
+        { id: 'snake',   name: 'Snake',         icon: '🐍', status: 'live', cost: SNAKE_ENTRY_COST, desc: 'Classic grid arcade — 10 min per session' },
+        { id: 'sudoku',  name: 'Sudoku',        icon: '🔢', status: 'soon', cost: null, desc: 'Coming soon' },
+        { id: 'memory',  name: 'Memory Match',  icon: '🧠', status: 'soon', cost: null, desc: 'Coming soon' },
+        { id: 'pong',    name: 'Pong',          icon: '🏓', status: 'soon', cost: null, desc: 'Coming soon' },
+        { id: 'brick',   name: 'Brick Breaker', icon: '🧱', status: 'soon', cost: null, desc: 'Coming soon' },
+    ];
+
+    function renderArcade(){
+        const root = document.getElementById('arcadeRoot');
+        if (!root) return;
+        const w = window.LQ.get();
+        const pct = Math.max(0, Math.min(100, (w.xp / w.xpNeeded) * 100));
+
+        root.innerHTML = `
+            <div class="arcade-header">
+                <div class="arcade-title">Arcade<span class="sub">Earn coins from real tasks. Spend them here.</span></div>
+                <div class="arcade-wallet"><span class="coin-ic">🪙</span>${w.coins}</div>
+            </div>
+            <div class="arcade-level-strip">
+                <span class="arcade-level-chip">Lv ${w.level}</span>
+                <div class="alx-bar"><div class="alx-fill" style="width:${pct}%"></div></div>
+                <span class="alx-label">${w.xp}/${w.xpNeeded} XP</span>
+            </div>
+
+            <div class="arcade-section-title">Games</div>
+            <div class="arcade-grid" id="arcadeGrid"></div>
+            <div class="arcade-empty-note">More games unlock here as LifeQuest grows — Sudoku, Memory Match, Pong and Brick Breaker are next.</div>
+
+            <div class="arcade-game-view" id="arcadeGameView">
+                <button class="arcade-back-btn" onclick="window.__arcadeBack()" aria-label="Back to Arcade">←<span class="back-label"> Back to Arcade</span></button>
+                <div id="arcadeGameHost"></div>
+            </div>
+        `;
+
+        const grid = document.getElementById('arcadeGrid');
+        grid.innerHTML = GAMES.map(g => {
+            const live = g.status === 'live';
+            return `
+                <div class="game-card ${live ? 'live' : 'locked'}" ${live ? `onclick="window.__arcadeLaunch('${g.id}')"` : ''}>
+                    <span class="gc-badge">${live ? 'Play' : 'Soon'}</span>
+                    <div class="gc-icon">${g.icon}</div>
+                    <div>
+                        <div class="gc-name">${g.name}</div>
+                        <div class="gc-desc">${esc(g.desc)}</div>
+                    </div>
+                    <div class="gc-cost-row">
+                        <span class="gc-cost">${live ? `🪙 ${g.cost}` : '—'}</span>
+                        ${live ? `<span class="gc-play-btn">Play</span>` : ''}
+                    </div>
+                </div>`;
+        }).join('');
+    }
+    window.renderArcade = renderArcade;
+
+    function showNotEnoughCoinsModal(cost, balance){
+        let backdrop = document.getElementById('lqNotEnoughModal');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.id = 'lqNotEnoughModal';
+            backdrop.className = 'lq-modal-backdrop';
+            document.body.appendChild(backdrop);
+        }
+        backdrop.innerHTML = `
+            <div class="lq-modal-card">
+                <div class="lmc-icon">🪙</div>
+                <div class="lmc-title">Not Enough Coins</div>
+                <div class="lmc-desc">Snake costs ${cost} 🪙 per session. You have ${balance} 🪙 — complete a few more tasks or habits to earn the rest.</div>
+                <button class="lmc-btn" onclick="document.getElementById('lqNotEnoughModal').classList.remove('show')">Got it</button>
+            </div>
+        `;
+        backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.classList.remove('show'); };
+        requestAnimationFrame(() => backdrop.classList.add('show'));
+    }
+
+    /* Shared by the initial launch (from the game grid) and every replay
+       requested from inside the mounted Snake instance (Play Again,
+       Restart, Enter/Space on the home or game-over screen). Returns true
+       and deducts coins if the player can afford it; otherwise shows the
+       "Not Enough Coins" modal and returns false. */
+    function chargeSnakeEntry(){
+        const w = window.LQ.get();
+        if (w.coins < SNAKE_ENTRY_COST) {
+            showNotEnoughCoinsModal(SNAKE_ENTRY_COST, w.coins);
+            return false;
+        }
+        window.LQ.spend(SNAKE_ENTRY_COST);
+        lqPlayRewardAnimation({ title: `Snake session started — −${SNAKE_ENTRY_COST} 🪙`, icon: '🐍' });
+        return true;
+    }
+    window.__arcadeChargeForReplay = chargeSnakeEntry;
+
+    window.__arcadeLaunch = function(id){
+        if (id !== 'snake') return; // only Snake is wired up so far
+        if (!chargeSnakeEntry()) return;
+
+        document.getElementById('arcadeGrid').style.display = 'none';
+        document.querySelector('.arcade-level-strip').style.display = 'none';
+        document.querySelector('.arcade-section-title').style.display = 'none';
+        document.querySelector('.arcade-empty-note').style.display = 'none';
+        document.getElementById('arcadeGameView').classList.add('active');
+        document.body.classList.add('lq-game-fullscreen');
+        mountSnake(document.getElementById('arcadeGameHost'));
+    };
+    window.__arcadeBack = function(){
+        const host = document.getElementById('arcadeGameHost');
+        if (host && typeof host.__snakeTeardown === 'function') host.__snakeTeardown();
+        document.getElementById('arcadeGameView').classList.remove('active');
+        document.body.classList.remove('lq-game-fullscreen');
+        document.body.classList.remove('lq-game-active');
+        const grid = document.getElementById('arcadeGrid'); if (grid) grid.style.display = '';
+        const strip = document.querySelector('.arcade-level-strip'); if (strip) strip.style.display = '';
+        const sect = document.querySelector('.arcade-section-title'); if (sect) sect.style.display = '';
+        const note = document.querySelector('.arcade-empty-note'); if (note) note.style.display = '';
+        renderArcade.__snakeMounted = false;
+        // re-render the grid header so coin/XP reflect anything earned in-game
+        renderArcade();
+    };
+
+    function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+    document.addEventListener('lq:update', () => {
+        renderHomeWallet();
+        const profilePanel = document.getElementById('panel-profile');
+        if (profilePanel && profilePanel.classList.contains('active')) renderProfile();
+        const progressPanel = document.getElementById('panel-progress');
+        if (progressPanel && progressPanel.classList.contains('active')) renderLqProgress();
+    });
+
+    /* ── Bootstrap ───────────────────────────────────────────────────── */
+    const prevInit2 = window.__lifeOSInit;
+    window.__lifeOSInit = function(){
+        // Wrap registerMoreItem FIRST — habits/health/expenses each call it
+        // from inside the earlier init layers triggered by prevInit2() below,
+        // so the wrapper has to be in place before that chain runs.
+        wrapRegisterMoreItem();
+        if (prevInit2) prevInit2();
+        hookTaskCompletion();
+        hookHabitCompletion();
+        hookGoalAndExpense();
+        seedRewardedFromExisting();
+        lqHandleDailyLogin();
+        lqCheckAchievement('level5', wallet.level >= 5);
+        lqCheckAchievement('tasks100', wallet.tasksCompleted >= 100);
+        lqCheckAchievement('firstTask', wallet.tasksCompleted >= 1);
+        renderHomeWallet();
+        // Land on Home by default instead of the AI chat tab
+        if (window.switchTab) window.switchTab('home');
+    };
+})();
+</script>
+
+
+<!-- ==================================================================
+     LifeQuest Arcade — Snake game module (mountSnake)
+     Scoped CSS + namespaced game logic, mounted into #arcadeGameHost
+     on demand. Coins read/write through the shared window.LQ wallet.
+     ================================================================== -->
+<script>
+/* ====================================================================
+   LifeQuest Arcade — Snake module
+   Self-contained: injects its own scoped CSS once, builds its markup
+   inside the given host element, and runs the (namespaced, factory-
+   scoped) game logic against that host. Call mountSnake(host) to start,
+   and host.__snakeTeardown() — wired up automatically — to stop timers
+   and event listeners when the player leaves the Arcade tab.
+   ==================================================================== */
+function mountSnake(host){
+    if (!document.getElementById('lqSnakeStyles')) {
+        const styleEl = document.createElement('style');
+        styleEl.id = 'lqSnakeStyles';
+        styleEl.textContent = `
+  /* =========================================================
+     Design tokens
+     ========================================================= */
+  .lq-snake-root {
+    --bg:#0b0b0f;
+    --surface:#14141b;
+    --surface-2:#1c1c25;
+    --border:#26262f;
+    --text:#ececf1;
+    --muted:#9b9ba6;
+    --accent:#10a37f;
+    --accent-2:#1ec8a0;
+    --gold:#f5c84b;
+    --danger:#ef4444;
+    --food:#f59e0b;
+    --xp:#7c5cff;
+    --radius:14px;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif;
+  }
+
+  .lq-snake-root * {box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  .lq-snake-root {height:100%;min-height:100%}
+  .lq-snake-root {
+    margin:0;font-family:var(--font);color:var(--text);
+    background:var(--bg);
+    overscroll-behavior:none;-webkit-user-select:none;user-select:none;
+    position:relative;overflow-x:hidden;
+  }
+  /* Animated background canvas */
+  .lq-snake-root #bgCanvas {
+    position:absolute;inset:0;width:100%;height:100%;
+    z-index:0;pointer-events:none;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(16,163,127,.18), transparent 60%),
+      radial-gradient(900px 500px at 90% 110%, rgba(124,92,255,.12), transparent 60%),
+      var(--bg);
+  }
+
+  /* App shell: a vertical flex column that gives the board almost all
+     available height. Chrome above/below the board shrinks to content;
+     the board-wrap is the only flex-growing element.
+
+     min-height (not a hard height), and a real viewport-relative value
+     for the same reason as .lq-snake-root above, is a safety net: while
+     actually playing/paused, content is sized to fit exactly, so the
+     page never needs to scroll. But the home and game-over screens show
+     much more at once (full chrome + a tall overlay card + the bottom
+     controls row), and on a short viewport — especially inside a
+     browser's own preview/share-sheet chrome eating extra height — that
+     combination can genuinely be taller than the screen. Letting .app
+     grow past the viewport here means #arcadeGameHost (see
+     body.lq-game-fullscreen rules above) is the one actual scroll
+     boundary, so the bottom controls row stays reachable by scrolling
+     instead of being permanently clipped off. */
+  .lq-snake-root .app {
+    position:relative;z-index:1;
+    height:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding:calc(env(safe-area-inset-top) + 8px) 10px calc(env(safe-area-inset-bottom) + 8px);
+    gap:8px;
+    transition:padding .2s ease;
+  }
+  /* On tall, narrow viewports the square board is necessarily width-
+     limited, so once the chrome above/below it collapses for play there
+     can be real leftover vertical space below the board+dpad. Anchoring
+     to the top (instead of centering everything) keeps the score/level
+     HUD flush against the top of the play area rather than floating in
+     a gap — any leftover space ends up at the very bottom, which reads
+     as normal breathing room instead of a layout bug. Padding also
+     tightens since the breathing room was only ever needed around the
+     (now-hidden) chrome text and buttons, not around the board itself. */
+  .lq-snake-root .app.is-playing,
+  .lq-snake-root .app.is-paused {
+    justify-content:flex-start;
+    padding:calc(env(safe-area-inset-top) + 4px) 4px calc(env(safe-area-inset-bottom) + 4px);
+    gap:10px;
+  }
+
+  /* Top bar — shrinks to a slim strip; gets minimized further once a
+     run is in progress (see .app.is-playing below). */
+  .lq-snake-root .topbar {
+    width:100%;max-width:680px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:2px 4px;gap:10px;
+    transition:opacity .25s ease, max-height .25s ease, margin .25s ease;
+  }
+  .lq-snake-root .brand-wrap {display:flex;align-items:center;gap:10px;min-width:0}
+  .lq-snake-root .brand {font-weight:700;letter-spacing:.2px;font-size:17px}
+  .lq-snake-root .brand .dot {color:var(--accent)}
+  .lq-snake-root .level-badge {
+    display:inline-flex;align-items:center;gap:6px;
+    background:linear-gradient(135deg, rgba(245,200,75,.15), rgba(124,92,255,.15));
+    border:1px solid rgba(245,200,75,.35);
+    padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;
+    color:var(--gold);
+  }
+  .lq-snake-root .scores {display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .lq-snake-root .chip {
+    background:var(--surface);border:1px solid var(--border);
+    padding:7px 11px;border-radius:999px;font-size:12px;color:var(--muted);
+    display:inline-flex;gap:6px;align-items:center;white-space:nowrap;
+  }
+  .lq-snake-root .chip b {color:var(--text);font-weight:600}
+
+  /* XP bar + daily challenge — full chrome, only shown outside active play */
+  .lq-snake-root .xp-wrap {
+    width:100%;max-width:680px;flex:0 0 auto;
+    display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted);
+    padding:0 4px;overflow:hidden;
+    transition:opacity .2s ease, max-height .2s ease, margin .2s ease;
+  }
+  .lq-snake-root .xp-bar {
+    flex:1;height:6px;background:var(--surface);border:1px solid var(--border);
+    border-radius:999px;overflow:hidden;position:relative;
+  }
+  .lq-snake-root .xp-fill {
+    height:100%;width:0%;
+    background:linear-gradient(90deg, var(--xp), var(--accent-2));
+    border-radius:999px;transition:width .5s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 0 12px rgba(124,92,255,.5);
+  }
+
+  /* Collapsible chrome: anything tagged .lq-chrome shrinks away while
+     a run is active, freeing maximum height for the board. We use
+     max-height+opacity (not display:none) so layout shifts animate
+     smoothly instead of popping. Pausing collapses the same chrome as
+     playing (rather than springing it back open) so the board doesn't
+     dramatically resize every time the player taps pause/resume — the
+     floating HUD already shows score/level while paused. */
+  .lq-snake-root .app.is-playing .lq-chrome,
+  .lq-snake-root .app.is-paused .lq-chrome {
+    opacity:0;max-height:0;margin:0;padding-top:0;padding-bottom:0;
+    pointer-events:none;overflow:hidden;
+  }
+  .lq-snake-root .app.is-playing .controls,
+  .lq-snake-root .app.is-paused .controls {
+    opacity:0;max-height:0;margin:0;pointer-events:none;overflow:hidden;
+  }
+
+  /* Board — the star of the show. Sized in JS (Render.layoutBoard) to
+     the largest square that fits the space left over after the slim
+     HUD/chrome above and below, since aspect-ratio fighting flex-grow
+     in a column layout doesn't reliably stay square across very wide
+     or very narrow viewports. flex:0 0 auto means this box only ever
+     takes the explicit px size JS gives it (never stretches to fill
+     leftover space itself); margin:auto then centers that square. */
+  .lq-snake-root .board-wrap {
+    flex:0 0 auto;min-height:0;min-width:0;
+    margin:0 auto;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+    touch-action:none;
+  }
+  .lq-snake-root canvas#board {display:block;width:100%;height:100%}
+
+  /* Floating compact HUD — pinned to the board itself, visible only
+     while playing/paused. Replaces the bulky topbar+xp-wrap so the
+     board can claim the space those used to occupy. */
+  .lq-snake-root .hud {
+    position:absolute;top:10px;left:10px;right:10px;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:8px;pointer-events:none;
+    opacity:0;transform:translateY(-6px);
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .lq-snake-root .app.is-playing .hud,
+  .lq-snake-root .app.is-paused .hud { opacity:1;transform:none; }
+  .lq-snake-root .hud-cluster {display:flex;gap:6px;align-items:center}
+  .lq-snake-root .hud-pill {
+    background:rgba(20,20,27,.78);border:1px solid var(--border);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-radius:999px;padding:6px 11px;font-size:12px;color:var(--muted);
+    display:inline-flex;gap:5px;align-items:center;white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,.3);
+    transition:transform .12s ease;
+  }
+  .lq-snake-root .hud-pill b {color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+  .lq-snake-root .hud-pill.hud-score {border-color:rgba(30,200,160,.4)}
+  .lq-snake-root .hud-pill.hud-score b {color:var(--accent-2)}
+  .lq-snake-root .hud-pill.pulse {animation:hudPulse .32s ease}
+  @keyframes hudPulse { 0%{transform:scale(1)} 40%{transform:scale(1.12)} 100%{transform:scale(1)} }
+  .lq-snake-root .level-flash {animation:levelFlash .7s ease}
+  @keyframes levelFlash {
+    0% {transform:scale(1); box-shadow:0 0 0 rgba(245,200,75,0)}
+    30% {transform:scale(1.22); box-shadow:0 0 22px rgba(245,200,75,.85)}
+    100% {transform:scale(1); box-shadow:0 0 0 rgba(245,200,75,0)}
+  }
+  .lq-snake-root .hud-timer {
+    font-variant-numeric:tabular-nums;font-weight:700;color:var(--muted);
+  }
+  .lq-snake-root .hud-timer.warn {color:#ffb84d;animation:lqPulseHud 1s ease-in-out infinite}
+  @keyframes lqPulseHud {0%,100%{opacity:1}50%{opacity:.5}}
+
+  /* Overlays */
+  .lq-snake-root .overlay {
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:18px;text-align:center;padding:24px;
+    background:linear-gradient(180deg, rgba(11,11,15,.55), rgba(11,11,15,.88));
+    backdrop-filter:blur(8px);animation:fade .25s ease-out;z-index:30;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  .lq-snake-root .overlay.hidden {display:none}
+  .lq-snake-root .title {font-size:clamp(28px,6vw,40px);font-weight:700;letter-spacing:-.5px;margin:0}
+  .lq-snake-root .subtitle {color:var(--muted);margin:0;font-size:14px}
+  .lq-snake-root .big-score {font-size:48px;font-weight:700;margin:4px 0 0;
+    background:linear-gradient(135deg,var(--accent-2),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:bigScorePop .45s cubic-bezier(.2,1.4,.4,1);}
+  @keyframes bigScorePop {0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  .lq-snake-root .meta {color:var(--muted);font-size:13px}
+
+  /* Buttons */
+  .lq-snake-root .btn {
+    appearance:none;border:0;cursor:pointer;
+    background:var(--accent);color:#06231b;
+    font-weight:600;font-size:15px;padding:14px 22px;border-radius:12px;
+    transition:transform .12s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow:0 6px 20px rgba(16,163,127,.35);
+  }
+  .lq-snake-root .btn:hover {background:var(--accent-2)}
+  .lq-snake-root .btn:active {transform:scale(.97)}
+  .lq-snake-root .btn.ghost {
+    background:var(--surface-2);color:var(--text);
+    border:1px solid var(--border);box-shadow:none;
+  }
+  .lq-snake-root .btn.ghost:hover {background:#22222d}
+  .lq-snake-root .row {display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+  .lq-snake-root .controls {
+    width:100%;max-width:680px;flex:0 0 auto;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    transition:opacity .2s ease, max-height .2s ease, margin .2s ease;
+  }
+  .lq-snake-root .iconbtn {
+    width:42px;height:42px;border-radius:12px;
+    background:var(--surface);border:1px solid var(--border);color:var(--text);
+    display:inline-flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:background .2s, transform .12s;flex:0 0 auto;
+  }
+  .lq-snake-root .iconbtn:hover {background:var(--surface-2)}
+  .lq-snake-root .iconbtn:active {transform:scale(.92)}
+  .lq-snake-root .iconbtn svg {width:18px;height:18px}
+  .lq-snake-root .hint {color:var(--muted);font-size:12px;text-align:center;margin:0;flex:1}
+
+  /* Floating in-game pause button — sits over the board top-right
+     during play so the player never loses access to it even though
+     the full controls row is hidden while playing. */
+  .lq-snake-root .hud-pausebtn {
+    pointer-events:auto;
+    width:36px;height:36px;border-radius:50%;
+    background:rgba(20,20,27,.78);border:1px solid var(--border);color:var(--text);
+    display:inline-flex;align-items:center;justify-content:center;
+    cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 4px 14px rgba(0,0,0,.3);transition:transform .12s ease, background .2s ease;
+    flex:0 0 auto;
+  }
+  .lq-snake-root .hud-pausebtn:hover {background:rgba(34,34,45,.85)}
+  .lq-snake-root .hud-pausebtn:active {transform:scale(.9)}
+  .lq-snake-root .hud-pausebtn svg {width:15px;height:15px}
+
+  /* D-pad — a real row in the layout, directly below the board, not an
+     overlay on top of it. This guarantees it can never sit on top of
+     the snake or food: it occupies its own (small, fixed) strip of
+     height, the board occupies the rest. Left/right arrows flank a
+     stacked up/down pair so it reads as one compact thumb cluster
+     rather than a 3x3 grid eating extra vertical space. */
+  .lq-snake-root .dpad {
+    display:none;
+    width:100%;max-width:320px;flex:0 0 auto;
+    align-items:center;justify-content:center;gap:12px;
+    margin:4px auto 0;
+  }
+  .lq-snake-root .app.is-playing .dpad.touch-enabled { display:flex; }
+  .lq-snake-root .dpad-mid {display:flex;flex-direction:column;gap:8px}
+  .lq-snake-root .dpad button {
+    width:58px;height:58px;
+    background:rgba(20,20,27,.78);border:1px solid var(--border);color:var(--text);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border-radius:15px;font-size:22px;cursor:pointer;
+    transition:background .15s, transform .1s;
+  }
+  .lq-snake-root .dpad button:active {background:var(--surface-2);transform:scale(.92)}
+
+  /* Achievement toast */
+  .lq-snake-root .toast-stack {
+    position:absolute;top:12px;left:50%;
+    transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;
+    pointer-events:none;width:min(92%, 360px);
+  }
+  .lq-snake-root .toast {
+    background:linear-gradient(135deg, rgba(28,28,37,.95), rgba(20,20,27,.95));
+    border:1px solid rgba(245,200,75,.45);
+    border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:center;
+    box-shadow:0 12px 30px rgba(0,0,0,.5), 0 0 24px rgba(245,200,75,.25);
+    animation:toastIn .4s cubic-bezier(.2,.8,.2,1), toastOut .4s ease 3.6s forwards;
+    backdrop-filter:blur(10px);
+  }
+  .lq-snake-root .toast .icon {font-size:22px;filter:drop-shadow(0 0 8px rgba(245,200,75,.6))}
+  .lq-snake-root .toast .t {font-weight:600;font-size:13px;color:var(--text)}
+  .lq-snake-root .toast .d {font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* Achievements modal */
+  .lq-snake-root .modal {
+    position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:40;
+    display:flex;align-items:center;justify-content:center;padding:16px;
+    backdrop-filter:blur(6px);animation:fade .2s ease-out;
+  }
+  .lq-snake-root .modal.hidden {display:none}
+  .lq-snake-root .modal-card {
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:18px;width:100%;max-width:460px;max-height:70vh;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .lq-snake-root .modal-head {
+    padding:16px 18px;display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--border);
+  }
+  .lq-snake-root .modal-head h3 {margin:0;font-size:18px}
+  .lq-snake-root .modal-close {
+    background:transparent;border:0;color:var(--muted);font-size:22px;cursor:pointer;
+    width:32px;height:32px;border-radius:8px;
+  }
+  .lq-snake-root .modal-close:hover {background:var(--surface-2);color:var(--text)}
+  .lq-snake-root .ach-list {overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+  .lq-snake-root .ach {
+    display:flex;gap:12px;align-items:center;padding:12px;
+    background:var(--surface-2);border:1px solid var(--border);border-radius:12px;
+    transition:transform .15s;
+  }
+  .lq-snake-root .ach.unlocked {border-color:rgba(245,200,75,.4)}
+  .lq-snake-root .ach .ic {
+    width:42px;height:42px;border-radius:10px;display:flex;align-items:center;
+    justify-content:center;font-size:22px;background:var(--surface);flex:0 0 auto;
+    filter:grayscale(1);opacity:.4;
+  }
+  .lq-snake-root .ach.unlocked .ic {filter:none;opacity:1;
+    background:linear-gradient(135deg,rgba(245,200,75,.2),rgba(124,92,255,.2));}
+  .lq-snake-root .ach .body {flex:1;min-width:0}
+  .lq-snake-root .ach .name {font-weight:600;font-size:14px}
+  .lq-snake-root .ach .desc {font-size:12px;color:var(--muted);margin-top:2px}
+  .lq-snake-root .ach .status {font-size:11px;color:var(--gold);font-weight:600}
+  .lq-snake-root .ach:not(.unlocked) .status {color:var(--muted)}
+
+  @keyframes fade {from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @keyframes toastIn {from{opacity:0;transform:translateY(-20px) scale(.95)}to{opacity:1;transform:none}}
+  @keyframes toastOut {to{opacity:0;transform:translateY(-10px) scale(.98)}}
+
+  /* =========================================================
+     Coins, Stats, Daily Challenge, Skins — additions
+     ========================================================= */
+  .lq-snake-root .coin-chip {
+    background:linear-gradient(135deg, rgba(245,200,75,.18), rgba(245,200,75,.08));
+    border:1px solid rgba(245,200,75,.4);
+    padding:7px 11px;border-radius:999px;font-size:12px;color:var(--gold);
+    display:inline-flex;gap:6px;align-items:center;white-space:nowrap;font-weight:600;
+  }
+  .lq-snake-root .coin-chip .coin-ic {filter:drop-shadow(0 0 4px rgba(245,200,75,.6))}
+
+  /* Stats modal */
+  .lq-snake-root .stats-grid {display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}
+  .lq-snake-root .stat-card {
+    background:var(--surface-2);border:1px solid var(--border);border-radius:14px;
+    padding:14px;display:flex;flex-direction:column;gap:6px;
+  }
+  .lq-snake-root .stat-card .si {font-size:20px;line-height:1}
+  .lq-snake-root .stat-card .sv {font-size:20px;font-weight:700;color:var(--text)}
+  .lq-snake-root .stat-card .sl {font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .lq-snake-root .stat-card.wide {grid-column:1/-1}
+
+  /* Daily challenge card */
+  .lq-snake-root .challenge-card {
+    width:100%;max-width:680px;flex:0 0 auto;
+    background:linear-gradient(135deg, rgba(124,92,255,.12), rgba(16,163,127,.10));
+    border:1px solid rgba(124,92,255,.35);border-radius:14px;
+    padding:10px 14px;display:flex;align-items:center;gap:12px;
+    transition:opacity .2s ease, max-height .2s ease, margin .2s ease, padding .2s ease;
+  }
+  .lq-snake-root .challenge-card .cc-ic {font-size:24px;flex:0 0 auto}
+  .lq-snake-root .challenge-card .cc-body {flex:1;min-width:0}
+  .lq-snake-root .challenge-card .cc-title {font-size:13px;font-weight:600;color:var(--text)}
+  .lq-snake-root .challenge-card .cc-sub {font-size:11px;color:var(--muted);margin-top:2px}
+  .lq-snake-root .challenge-card .cc-bar {
+    height:5px;border-radius:999px;background:var(--surface);border:1px solid var(--border);
+    overflow:hidden;margin-top:6px;
+  }
+  .lq-snake-root .challenge-card .cc-fill {
+    height:100%;width:0%;background:linear-gradient(90deg,var(--xp),var(--accent-2));
+    border-radius:999px;transition:width .4s ease;
+  }
+  .lq-snake-root .challenge-card .cc-reward {
+    font-size:11px;font-weight:700;color:var(--gold);flex:0 0 auto;text-align:right;
+    display:flex;flex-direction:column;gap:2px;align-items:flex-end;
+  }
+  .lq-snake-root .challenge-card.done {border-color:rgba(245,200,75,.5);background:linear-gradient(135deg, rgba(245,200,75,.14), rgba(124,92,255,.08));}
+  .lq-snake-root .challenge-card.done .cc-title {color:var(--gold)}
+
+  /* Skins modal */
+  .lq-snake-root .skin-grid {
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    min-height:0;flex:1 1 auto;align-content:start;
+  }
+  .lq-snake-root .skin-card {
+    background:var(--surface-2);border:1px solid var(--border);border-radius:14px;
+    padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;
+    cursor:pointer;transition:transform .15s, border-color .2s;position:relative;
+  }
+  .lq-snake-root .skin-card:hover {transform:translateY(-2px)}
+  .lq-snake-root .skin-card.selected {border-color:var(--accent-2);box-shadow:0 0 0 2px rgba(30,200,160,.25)}
+  .lq-snake-root .skin-card.locked {cursor:default;opacity:.55}
+  .lq-snake-root .skin-preview {
+    width:100%;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:4px;
+    background:var(--surface);
+  }
+  .lq-snake-root .skin-preview .seg {width:14px;height:14px;border-radius:4px}
+  .lq-snake-root .skin-name {font-size:12px;font-weight:600;text-align:center}
+  .lq-snake-root .skin-req {font-size:10px;color:var(--muted);text-align:center}
+  .lq-snake-root .skin-check {
+    position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;
+    background:var(--accent-2);color:#06231b;font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .lq-snake-root .skin-lockbadge {position:absolute;top:8px;right:8px;font-size:14px;opacity:.8}
+  .lq-snake-root .skin-card .btn-mini {
+    appearance:none;border:0;cursor:pointer;font-size:11px;font-weight:600;
+    padding:5px 10px;border-radius:8px;background:var(--accent);color:#06231b;
+  }
+  .lq-snake-root .skin-card.locked .btn-mini {background:var(--surface);color:var(--muted);cursor:not-allowed}
+
+  /* Header icon row tweak */
+  .lq-snake-root .header-icons {display:flex;gap:6px}
+  .lq-snake-root .header-icons .iconbtn {width:34px;height:34px}
+  .lq-snake-root .header-icons .iconbtn svg {width:15px;height:15px}
+`;
+        document.head.appendChild(styleEl);
+    }
+
+    host.innerHTML = `<div class="lq-snake-root">
+<canvas id="bgCanvas"></canvas>
+
+<div class="app" id="appShell">
+  <header class="topbar lq-chrome">
+    <div class="brand-wrap">
+      <div class="brand">Snake<span class="dot">.</span></div>
+      <div class="level-badge" title="Player Level">⭐ Lv <span id="levelNum">1</span></div>
+    </div>
+    <div class="scores">
+      <span class="coin-chip"><span class="coin-ic">🪙</span><b id="coins">0</b></span>
+      <span class="chip">Score <b id="score">0</b></span>
+      <span class="chip">Best <b id="best">0</b></span>
+    </div>
+  </header>
+
+  <div class="challenge-card lq-chrome" id="challengeCard">
+    <div class="cc-ic" id="challengeIcon">🎯</div>
+    <div class="cc-body">
+      <div class="cc-title" id="challengeTitle">Daily Challenge</div>
+      <div class="cc-sub" id="challengeSub">Loading…</div>
+      <div class="cc-bar"><div class="cc-fill" id="challengeFill"></div></div>
+    </div>
+    <div class="cc-reward" id="challengeReward"></div>
+  </div>
+
+  <div class="xp-wrap lq-chrome">
+    <span>XP</span>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
+    <span id="xpLabel">0 / 50</span>
+  </div>
+
+  <div class="board-wrap" id="boardWrap">
+    <canvas id="board" width="600" height="600" aria-label="Snake game board"></canvas>
+
+    <!-- Compact floating HUD: only visible while playing/paused, replaces
+         the full topbar/xp-wrap above so the board can claim that space. -->
+    <div class="hud" id="gameHud">
+      <div class="hud-cluster">
+        <span class="hud-pill hud-score" id="hudScorePill">Score <b id="hudScore">0</b></span>
+        <span class="hud-pill" id="hudLevelPill">Lv <b id="hudLevel">1</b></span>
+      </div>
+      <div class="hud-cluster">
+        <span class="hud-pill hud-timer" id="sessionTimer" style="display:none;">10:00</span>
+        <button class="hud-pausebtn" id="pauseBtn" aria-label="Pause" title="Pause">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home/pause/game-over screens are full-app overlays, not boxed into
+       the board's small square — the board can be quite small on a tall
+       narrow phone (it's width-limited), and these screens have more
+       content (title, several buttons, two rows) than that box can
+       reliably fit. Pinning to .app instead of .board-wrap means they
+       always have the full screen to lay out in, and can scroll via the
+       same #arcadeGameHost boundary as everything else if they ever
+       still need more room than that. -->
+  <div class="overlay" id="homeOverlay">
+    <h1 class="title">Snake</h1>
+    <p class="subtitle">Swipe or use arrows / WASD</p>
+    <p class="meta">High score: <b id="homeBest">0</b> · Level <b id="homeLevel">1</b></p>
+    <div class="row">
+      <button class="btn" id="startBtn">Start Game</button>
+      <button class="btn ghost" id="achBtn">🏆 Achievements</button>
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="statsBtn">📊 Statistics</button>
+      <button class="btn ghost" id="skinsBtn">🎨 Skins</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="pauseOverlay">
+    <h2 class="title">Paused</h2>
+    <div class="row">
+      <button class="btn" id="resumeBtn">Resume</button>
+      <button class="btn ghost" id="quitBtn">Quit</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="overOverlay">
+    <p class="subtitle">Game Over</p>
+    <p class="big-score" id="finalScore">0</p>
+    <p class="meta">Best: <b id="overBest">0</b> · +<b id="xpGained">0</b> XP</p>
+    <div class="row">
+      <button class="btn" id="againBtn">Play Again</button>
+      <button class="btn ghost" id="homeBtn">Home</button>
+    </div>
+  </div>
+
+  <div class="session-results" id="sessionResults" style="display:none;">
+    <div class="session-results-card">
+      <div class="src-title" id="srcTitle">Session Complete</div>
+      <div class="src-score" id="srcScore">0</div>
+      <div class="meta" style="color:var(--muted);font-size:12px;">final score</div>
+      <div class="src-rewards" id="srcRewards"></div>
+      <button class="src-btn" id="srcCloseBtn">Continue</button>
+    </div>
+  </div>
+
+  <!-- Touch controls live in their own row BELOW the board, never on top
+       of it, so they can never block the snake or food. Left/right flank
+       a stacked up/down pair so it reads as one compact thumb cluster. -->
+  <div class="dpad" id="dpad" aria-label="On-screen controls">
+    <button class="left" data-dir="left" aria-label="Left">◀</button>
+    <div class="dpad-mid">
+      <button class="up" data-dir="up" aria-label="Up">▲</button>
+      <button class="down" data-dir="down" aria-label="Down">▼</button>
+    </div>
+
+    <button class="right" data-dir="right" aria-label="Right">▶</button>
+  </div>
+
+  <div class="controls">
+    <span class="iconbtn" aria-hidden="true" style="visibility:hidden"></span>
+    <p class="hint">Eat the glowing food. Don't bite yourself.</p>
+    <button class="iconbtn" id="trophyBtn" aria-label="Achievements" title="Achievements">🏆</button>
+    <button class="iconbtn" id="skinsBtnGame" aria-label="Skins" title="Skins">🎨</button>
+    <button class="iconbtn" id="restartBtn" aria-label="Restart" title="Restart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts"></div>
+
+<div class="modal hidden" id="achModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>🏆 Achievements</h3>
+      <button class="modal-close" id="achClose" aria-label="Close">×</button>
+    </div>
+    <div class="ach-list" id="achList"></div>
+  </div>
+</div>
+
+<div class="modal hidden" id="statsModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>📊 Statistics</h3>
+      <button class="modal-close" id="statsClose" aria-label="Close">×</button>
+    </div>
+    <div class="stats-grid" id="statsGrid"></div>
+  </div>
+</div>
+
+<div class="modal hidden" id="skinsModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>🎨 Skins</h3>
+      <button class="modal-close" id="skinsClose" aria-label="Close">×</button>
+    </div>
+    <div class="skin-grid" id="skinGrid"></div>
+  </div>
+</div>
+</div>`;
+    const container = host; // the factory below scopes all lookups to this element
+
+    (function(container){
+/* =========================================================================
+   Snake Game — Premium V2 (embedded in LifeQuest Arcade)
+   Modules: Config, State, Storage, BG, Particles, Popups, Achievements,
+            Game, Render, UI, Input
+   This whole file runs inside a factory function — see the wrapper at the
+   bottom of snake_module.js — so every const/function here is scoped to
+   one mounted instance and never leaks onto window. `container` and
+   `moduleActive` come from that wrapper.
+   ========================================================================= */
+let moduleActive = true;
+
+/* ---------- Config ---------- */
+const CONFIG = {
+  cols: 20,
+  rows: 20,
+  baseSpeedMs: 180,
+  speedupEvery: 5,
+  speedupStepMs: 5,
+  minSpeedMs: 90,
+  xpPerFood: 5,
+  xpCurve: (lv) => 50 + (lv - 1) * 35, // XP needed for this level
+  colors: {
+    bgGrid: '#16161d',
+    snakeHead: '#1ec8a0',
+    snakeBody: '#10a37f',
+    food: '#f59e0b',
+  },
+  coinsPerFood: 1,
+  coinsPerLevel: 15,
+  coinsPerAchievement: 25,
+  coinsPerChallenge: 30,
+};
+
+/* LifeQuest session rules — each Snake play counts against the entry fee
+   already deducted in the Arcade tab before mountSnake() was called. */
+const SESSION_MS = 10 * 60 * 1000;       // 10 minutes per session
+const SESSION_WARN_MS = 60 * 1000;       // show the warning state in the last minute
+const SCORE_BONUS_TIERS = [              // highest qualifying tier wins, not cumulative
+  { score: 500, coins: 100, xp: 40 },
+  { score: 250, coins: 50,  xp: 20 },
+  { score: 100, coins: 20,  xp: 10 },
+];
+function scoreBonusFor(score){
+  for (const tier of SCORE_BONUS_TIERS) {
+    if (score >= tier.score) return tier;
+  }
+  return null;
+}
+
+const SKINS = [
+  { id:'green',   name:'Default Green',  head:'#1ec8a0', body:'#10a37f', unlock:{type:'free'} },
+  { id:'neon',    name:'Neon Blue',      head:'#5ad1ff', body:'#1f8fd4', unlock:{type:'coins', cost:100} },
+  { id:'cyber',   name:'Cyber Purple',   head:'#c89bff', body:'#7c5cff', unlock:{type:'coins', cost:200} },
+  { id:'fire',    name:'Fire Snake',     head:'#ffb24b', body:'#ef4444', unlock:{type:'level', level:5} },
+  { id:'gold',    name:'Gold Snake',     head:'#fff0b8', body:'#f5c84b', unlock:{type:'level', level:10} },
+  { id:'rainbow', name:'Rainbow Snake',  head:'#ffffff', body:'rainbow', unlock:{type:'achievement', count:6} },
+];
+
+/* ---------- State ---------- */
+const STATE = {
+  screen: 'home',
+  snake: [],                // grid cells {x,y}
+  prevSnake: [],            // previous tick snake (for interpolation)
+  dir: {x:1,y:0},
+  pendingDir: {x:1,y:0},
+  food: null,
+  score: 0,
+  best: 0,
+  xp: 0,
+  level: 1,
+  totalFood: 0,
+  gamesPlayed: 0,
+  tickMs: CONFIG.baseSpeedMs,
+  lastTick: 0,
+  tickProgress: 0,          // 0..1 between ticks for smooth interp
+  ateThisTick: false,
+  scoreGainedThisGame: 0,
+  xpGainedThisGame: 0,
+  obstacles: [],
+  powerups: [],
+
+  // Coins & skins
+  coins: 0,
+  unlockedSkins: ['green'],
+  currentSkin: 'green',
+
+  // Extended statistics
+  totalScore: 0,            // sum of all game scores, for averages
+  totalPlayTimeMs: 0,       // cumulative play time
+  longestSurvivalMs: 0,     // longest single game survival
+  runStartTime: 0,          // performance.now() when current run started
+
+  // Daily challenge
+  challenge: null,          // { id, type, goal, label, icon, rewardXP, rewardCoins, date }
+  challengeProgress: 0,
+  challengeDone: false,
+};
+
+/* ---------- Storage ---------- */
+const Storage = {
+  KEYS: {
+    best: 'snake.best', xp: 'snake.xp', level: 'snake.level',
+    totalFood: 'snake.totalFood', games: 'snake.games', ach: 'snake.ach',
+    unlockedSkins: 'snake.unlockedSkins', currentSkin: 'snake.currentSkin',
+    totalScore: 'snake.totalScore', totalPlayTimeMs: 'snake.totalPlayTimeMs',
+    longestSurvivalMs: 'snake.longestSurvivalMs', challenge: 'snake.challenge',
+  },
+  getInt(k){ return parseInt(localStorage.getItem(k) || '0', 10) || 0; },
+  setInt(k,v){ localStorage.setItem(k, String(v)); },
+  getJSON(k,fb){ try { return JSON.parse(localStorage.getItem(k)) ?? fb; } catch { return fb; } },
+  setJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); },
+  loadAll(){
+    STATE.best = this.getInt(this.KEYS.best);
+    STATE.xp = this.getInt(this.KEYS.xp);
+    STATE.level = Math.max(1, this.getInt(this.KEYS.level) || 1);
+    STATE.totalFood = this.getInt(this.KEYS.totalFood);
+    STATE.gamesPlayed = this.getInt(this.KEYS.games);
+    STATE.coins = window.LQ ? window.LQ.get().coins : 0; // shared LifeQuest wallet
+    STATE.unlockedSkins = this.getJSON(this.KEYS.unlockedSkins, ['green']);
+    if(!STATE.unlockedSkins.includes('green')) STATE.unlockedSkins.push('green');
+    STATE.currentSkin = localStorage.getItem(this.KEYS.currentSkin) || 'green';
+    STATE.totalScore = this.getInt(this.KEYS.totalScore);
+    STATE.totalPlayTimeMs = this.getInt(this.KEYS.totalPlayTimeMs);
+    STATE.longestSurvivalMs = this.getInt(this.KEYS.longestSurvivalMs);
+  },
+  saveProgress(){
+    this.setInt(this.KEYS.best, STATE.best);
+    this.setInt(this.KEYS.xp, STATE.xp);
+    this.setInt(this.KEYS.level, STATE.level);
+    this.setInt(this.KEYS.totalFood, STATE.totalFood);
+    this.setInt(this.KEYS.games, STATE.gamesPlayed);
+    this.setJSON(this.KEYS.unlockedSkins, STATE.unlockedSkins);
+    localStorage.setItem(this.KEYS.currentSkin, STATE.currentSkin);
+    this.setInt(this.KEYS.totalScore, STATE.totalScore);
+    this.setInt(this.KEYS.totalPlayTimeMs, STATE.totalPlayTimeMs);
+    this.setInt(this.KEYS.longestSurvivalMs, STATE.longestSurvivalMs);
+  },
+};
+
+/* ---------- DOM (scoped to this mounted instance's container) ---------- */
+const $ = (s)=>container.querySelector(s);
+const canvas = $('#board');
+const ctx = canvas.getContext('2d');
+const bgCanvas = $('#bgCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+
+const ui = {
+  score: $('#score'), best: $('#best'),
+  level: $('#levelNum'), xpFill: $('#xpFill'), xpLabel: $('#xpLabel'),
+  home: $('#homeOverlay'), homeBest: $('#homeBest'), homeLevel: $('#homeLevel'),
+  pause: $('#pauseOverlay'), over: $('#overOverlay'),
+  finalScore: $('#finalScore'), overBest: $('#overBest'), xpGained: $('#xpGained'),
+  toasts: $('#toasts'), achModal: $('#achModal'), achList: $('#achList'),
+  coins: $('#coins'),
+  statsModal: $('#statsModal'), statsGrid: $('#statsGrid'),
+  skinsModal: $('#skinsModal'), skinGrid: $('#skinGrid'),
+  challengeCard: $('#challengeCard'), challengeIcon: $('#challengeIcon'),
+  challengeTitle: $('#challengeTitle'), challengeSub: $('#challengeSub'),
+  challengeFill: $('#challengeFill'), challengeReward: $('#challengeReward'),
+  appShell: $('#appShell'), dpad: $('#dpad'),
+  hudScore: $('#hudScore'), hudScorePill: $('#hudScorePill'),
+  hudLevel: $('#hudLevel'), hudLevelPill: $('#hudLevelPill'),
+};
+
+/* ---------- Animated Background ---------- */
+const BG = {
+  particles: [],
+  init(){
+    this.resize();
+    this.particles = Array.from({length: 40}, () => this.spawn());
+    this._onResize = ()=>this.resize();
+    window.addEventListener('resize', this._onResize);
+  },
+  teardown(){
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
+  },
+  size(){
+    const r = bgCanvas.getBoundingClientRect();
+    return { w: r.width || 360, h: r.height || 560 };
+  },
+  resize(){
+    const dpr = Math.min(window.devicePixelRatio||1, 2);
+    const {w,h} = this.size();
+    bgCanvas.width = w * dpr;
+    bgCanvas.height = h * dpr;
+    bgCtx.setTransform(dpr,0,0,dpr,0,0);
+  },
+  spawn(){
+    const {w,h} = this.size();
+    return {
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: Math.random()*2 + 0.5,
+      vx: (Math.random()-0.5)*0.15,
+      vy: -(Math.random()*0.3 + 0.05),
+      hue: Math.random() < 0.5 ? 160 : 260,
+      a: Math.random()*0.4 + 0.1,
+    };
+  },
+  draw(){
+    const {w,h} = this.size();
+    bgCtx.clearRect(0,0,w,h);
+    for(const p of this.particles){
+      p.x += p.vx; p.y += p.vy;
+      if(p.y < -10){ p.y = h + 10; p.x = Math.random()*w; }
+      if(p.x < -10) p.x = w+10; if(p.x > w+10) p.x = -10;
+      bgCtx.beginPath();
+      bgCtx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.a})`;
+      bgCtx.shadowColor = `hsla(${p.hue}, 80%, 60%, .8)`;
+      bgCtx.shadowBlur = 8;
+      bgCtx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      bgCtx.fill();
+    }
+    bgCtx.shadowBlur = 0;
+  }
+};
+
+/* ---------- Particles (food burst) ---------- */
+const Particles = {
+  items: [],
+  burst(cx, cy, color){
+    for(let i=0;i<18;i++){
+      const a = Math.random()*Math.PI*2;
+      const sp = Math.random()*3 + 1.5;
+      this.items.push({
+        x:cx, y:cy, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp,
+        life:1, r:Math.random()*3+1.5, color
+      });
+    }
+  },
+  update(dt){
+    for(let i=this.items.length-1;i>=0;i--){
+      const p = this.items[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.92; p.vy *= 0.92;
+      p.life -= dt*1.6;
+      if(p.life <= 0) this.items.splice(i,1);
+    }
+  },
+  draw(ctx){
+    for(const p of this.items){
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  }
+};
+
+/* ---------- Floating popups (+10) ---------- */
+const Popups = {
+  items: [],
+  add(x,y,text,color='#f5c84b'){
+    this.items.push({x,y,text,color,life:1});
+  },
+  update(dt){
+    for(let i=this.items.length-1;i>=0;i--){
+      const p = this.items[i];
+      p.y -= 30*dt; p.life -= dt*1.0;
+      if(p.life <= 0) this.items.splice(i,1);
+    }
+  },
+  draw(ctx){
+    ctx.font = 'bold 16px -apple-system,system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    for(const p of this.items){
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color; ctx.shadowBlur = 8;
+      ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  }
+};
+
+/* ---------- Achievements ---------- */
+const ACHIEVEMENTS = [
+  { id:'firstFood', icon:'🍎', name:'First Bite', desc:'Eat your first food', check:s=>s.totalFood>=1 },
+  { id:'score100', icon:'💯', name:'Century', desc:'Reach score 100 in a game', check:s=>s.scoreGainedThisGame>=100 },
+  { id:'score500', icon:'🔥', name:'On Fire', desc:'Reach score 500 in a game', check:s=>s.scoreGainedThisGame>=500 },
+  { id:'level5', icon:'⭐', name:'Rising Star', desc:'Reach player level 5', check:s=>s.level>=5 },
+  { id:'level10', icon:'🌟', name:'Veteran', desc:'Reach player level 10', check:s=>s.level>=10 },
+  { id:'games10', icon:'🎮', name:'Dedicated', desc:'Play 10 games', check:s=>s.gamesPlayed>=10 },
+  { id:'food100', icon:'🍽️', name:'Gourmet', desc:'Eat 100 food total', check:s=>s.totalFood>=100 },
+  { id:'food500', icon:'👑', name:'Snake King', desc:'Eat 500 food total', check:s=>s.totalFood>=500 },
+];
+
+const Achievements = {
+  unlocked: {},
+  load(){ this.unlocked = Storage.getJSON(Storage.KEYS.ach, {}); },
+  save(){ Storage.setJSON(Storage.KEYS.ach, this.unlocked); },
+  count(){ return Object.keys(this.unlocked).length; },
+  check(){
+    for(const a of ACHIEVEMENTS){
+      if(!this.unlocked[a.id] && a.check(STATE)){
+        this.unlocked[a.id] = Date.now();
+        this.save();
+        Game.awardCoins(CONFIG.coinsPerAchievement, `+${CONFIG.coinsPerAchievement} coins`);
+        UI.toast(a);
+        Skins.checkUnlocks();
+      }
+    }
+  },
+};
+
+/* ---------- Skins ---------- */
+const Skins = {
+  isUnlocked(skin){ return STATE.unlockedSkins.includes(skin.id); },
+  canAfford(skin){ return skin.unlock.type==='coins' && STATE.coins >= skin.unlock.cost; },
+  unlock(skin, {silent=false}={}){
+    if(this.isUnlocked(skin)) return true;
+    STATE.unlockedSkins.push(skin.id);
+    Storage.saveProgress();
+    if(!silent) UI.toast({icon:'🎨', name:`Skin Unlocked: ${skin.name}`, desc:'Equip it from the Skins menu'});
+    return true;
+  },
+  buy(skin){
+    if(this.isUnlocked(skin)) return this.select(skin);
+    if(skin.unlock.type!=='coins') return;
+    if(STATE.coins < skin.unlock.cost) return;
+    if (window.LQ) {
+      if (!window.LQ.spend(skin.unlock.cost)) return;
+      STATE.coins = window.LQ.get().coins;
+    } else {
+      STATE.coins -= skin.unlock.cost;
+    }
+    this.unlock(skin);
+    this.select(skin);
+    UI.updateScore();
+    UI.renderSkins();
+  },
+  select(skin){
+    if(!this.isUnlocked(skin)) return;
+    STATE.currentSkin = skin.id;
+    Storage.saveProgress();
+    UI.renderSkins();
+  },
+  // Auto-unlock skins that are earned via level/achievement milestones
+  checkUnlocks(){
+    for(const s of SKINS){
+      if(this.isUnlocked(s)) continue;
+      if(s.unlock.type==='level' && STATE.level >= s.unlock.level) this.unlock(s);
+      else if(s.unlock.type==='achievement' && Achievements.count() >= s.unlock.count) this.unlock(s);
+    }
+  },
+  currentColors(){
+    const s = SKINS.find(s=>s.id===STATE.currentSkin) || SKINS[0];
+    return s;
+  },
+};
+
+/* ---------- Daily Challenge ---------- */
+const CHALLENGE_TEMPLATES = [
+  { type:'score',    icon:'💯', label:(g)=>`Score ${g} in one game`,        goal:[80,100,120,150] },
+  { type:'survive',  icon:'⏱️', label:(g)=>`Survive ${Math.round(g/60)} min in one game`, goal:[60,90,120] },
+  { type:'eat',      icon:'🍎', label:(g)=>`Eat ${g} food today`,           goal:[10,15,20,25] },
+];
+
+const Challenges = {
+  todayKey(){
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  },
+  load(){
+    const saved = Storage.getJSON(Storage.KEYS.challenge, null);
+    const today = this.todayKey();
+    if(saved && saved.date === today){
+      STATE.challenge = saved.challenge;
+      STATE.challengeProgress = saved.progress || 0;
+      STATE.challengeDone = !!saved.done;
+    } else {
+      this.generate(today);
+    }
+  },
+  generate(today){
+    const tpl = CHALLENGE_TEMPLATES[Math.floor(Math.random()*CHALLENGE_TEMPLATES.length)];
+    const goal = tpl.goal[Math.floor(Math.random()*tpl.goal.length)];
+    STATE.challenge = {
+      type: tpl.type, icon: tpl.icon, goal,
+      label: tpl.label(goal),
+      rewardXP: 30 + Math.round(goal*0.4),
+      rewardCoins: CONFIG.coinsPerChallenge,
+    };
+    STATE.challengeProgress = 0;
+    STATE.challengeDone = false;
+    this.save(today);
+  },
+  save(today){
+    Storage.setJSON(Storage.KEYS.challenge, {
+      date: today || this.todayKey(),
+      challenge: STATE.challenge,
+      progress: STATE.challengeProgress,
+      done: STATE.challengeDone,
+    });
+  },
+  // Call during gameplay with live progress against goal (does not complete until game ends, except 'eat' which is cumulative)
+  updateLive(scoreThisGame, survivalMsThisGame){
+    if(!STATE.challenge || STATE.challengeDone) return;
+    const c = STATE.challenge;
+    if(c.type==='score') STATE.challengeProgress = Math.max(STATE.challengeProgress, Math.min(c.goal, scoreThisGame));
+    else if(c.type==='survive') STATE.challengeProgress = Math.max(STATE.challengeProgress, Math.min(c.goal, Math.floor(survivalMsThisGame/1000)));
+    UI.renderChallenge();
+  },
+  onFoodEaten(){
+    if(!STATE.challenge || STATE.challengeDone) return;
+    if(STATE.challenge.type==='eat'){
+      STATE.challengeProgress = Math.min(STATE.challenge.goal, STATE.challengeProgress + 1);
+      this.checkComplete();
+    }
+    this.save();
+    UI.renderChallenge();
+  },
+  checkComplete(){
+    if(!STATE.challenge || STATE.challengeDone) return;
+    if(STATE.challengeProgress >= STATE.challenge.goal){
+      STATE.challengeDone = true;
+      this.save();
+      Game.awardXP(STATE.challenge.rewardXP);
+      Game.awardCoins(STATE.challenge.rewardCoins, `+${STATE.challenge.rewardCoins} coins`);
+      UI.toast({icon:'🎯', name:'Daily Challenge Complete!', desc:`+${STATE.challenge.rewardXP} XP, +${STATE.challenge.rewardCoins} coins`});
+      UI.renderChallenge();
+    }
+  },
+};
+
+/* ---------- Session timer (10-minute paid play window) ----------
+   Starts on the FIRST Game.start() after paying the entry fee, shown as
+   a small chip over the board. Stays running across deaths — dying just
+   shows the results screen; the clock keeps counting down underneath it,
+   and "Play Again" within the same window is free. It only fully stops
+   when time genuinely runs out, or the player quits back to Arcade. */
+const Session = {
+  endsAt: 0,
+  intervalId: null,
+  warned: false,
+  active: false,
+  begin(){
+    this.endsAt = performance.now() + SESSION_MS;
+    this.warned = false;
+    this.active = true;
+    const chip = $('#sessionTimer');
+    if (chip) chip.style.display = '';
+    this.tick();
+    if (this.intervalId) clearInterval(this.intervalId);
+    this.intervalId = setInterval(() => this.tick(), 1000);
+  },
+  stop(){
+    this.active = false;
+    if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
+    const chip = $('#sessionTimer');
+    if (chip) chip.style.display = 'none';
+  },
+  tick(){
+    if (!moduleActive) { this.stop(); return; }
+    const remainingMs = Math.max(0, this.endsAt - performance.now());
+    const chip = $('#sessionTimer');
+    if (chip) {
+      const totalSec = Math.ceil(remainingMs / 1000);
+      const mm = Math.floor(totalSec / 60);
+      const ss = String(totalSec % 60).padStart(2, '0');
+      chip.textContent = `${mm}:${ss}`;
+      chip.classList.toggle('warn', remainingMs <= SESSION_WARN_MS && remainingMs > 0);
+    }
+    if (remainingMs <= SESSION_WARN_MS && !this.warned && remainingMs > 0) {
+      this.warned = true;
+      if (window.lqPlayRewardAnimation) {
+        window.lqPlayRewardAnimation({ title: '1 minute left in this session!', icon: '⏳' });
+      }
+    }
+    if (remainingMs <= 0 && this.active) {
+      this.stop();
+      if (STATE.screen === 'playing' || STATE.screen === 'paused') {
+        Game.gameOver('timeUp');
+      } else {
+        // Died and is looking at the results screen / home screen when time
+        // ran out — nothing to force-end, just let the next Start charge again.
+        entryAlreadyPaid = false;
+      }
+    }
+  },
+};
+
+/* ---------- Game ---------- */
+const Game = {
+  reset(){
+    const mid = Math.floor(CONFIG.cols/2);
+    STATE.snake = [{x:mid-1,y:mid},{x:mid,y:mid},{x:mid+1,y:mid}];
+    STATE.prevSnake = STATE.snake.map(s=>({...s}));
+    STATE.dir = {x:1,y:0};
+    STATE.pendingDir = {x:1,y:0};
+    STATE.score = 0;
+    STATE.tickMs = CONFIG.baseSpeedMs;
+    STATE.tickProgress = 1;
+    STATE.scoreGainedThisGame = 0;
+    STATE.xpGainedThisGame = 0;
+    STATE.obstacles = [];
+    Particles.items = []; Popups.items = [];
+    this.placeFood();
+    UI.updateScore();
+  },
+  start(){
+    this.reset();
+    STATE.screen = 'playing';
+    UI.showOverlay(null);
+    STATE.lastTick = performance.now();
+    STATE.runStartTime = performance.now();
+    // Only resets the 10-minute clock on a fresh paid session. Replaying
+    // after a death within the same window keeps the existing countdown
+    // going instead of granting another full 10 minutes for free.
+    if (!Session.active) Session.begin();
+  },
+  pause(){ if(STATE.screen!=='playing') return; STATE.screen='paused'; UI.showOverlay('pause'); },
+  resume(){ if(STATE.screen!=='paused') return; STATE.screen='playing'; UI.showOverlay(null); STATE.lastTick=performance.now(); },
+  gameOver(reason){
+    STATE.screen='over';
+    STATE.gamesPlayed += 1;
+    // A normal death (hit a wall/self) leaves the session clock running —
+    // the player can keep replaying for free until the 10 minutes are up.
+    // Only a genuine time-up game over should stop the timer for good.
+    if (reason === 'timeUp') Session.stop();
+    else Render.notifyGameOver(); // visual "impact" flash only for an actual collision
+    const survivalMs = performance.now() - STATE.runStartTime;
+    STATE.totalPlayTimeMs += survivalMs;
+    if(survivalMs > STATE.longestSurvivalMs) STATE.longestSurvivalMs = survivalMs;
+    STATE.totalScore += STATE.score;
+    if(STATE.score > STATE.best) STATE.best = STATE.score;
+    Challenges.updateLive(STATE.score, survivalMs);
+    Challenges.checkComplete();
+    Storage.saveProgress();
+    Achievements.check();
+    Skins.checkUnlocks();
+    UI.updateScore();
+    ui.finalScore.textContent = STATE.score;
+    ui.overBest.textContent = STATE.best;
+    ui.xpGained.textContent = STATE.xpGainedThisGame;
+    UI.showOverlay('over');
+    this.settleSessionRewards(STATE.score, reason);
+  },
+  goHome(){
+    if (STATE.screen === 'playing' || STATE.screen === 'paused') {
+      // Quitting mid-session forfeits the rest of the timer but still pays
+      // out whatever was earned so far — same accounting as a natural game over.
+      Session.stop();
+      STATE.gamesPlayed += 1;
+      STATE.totalScore += STATE.score;
+      if (STATE.score > STATE.best) STATE.best = STATE.score;
+      Storage.saveProgress();
+      if (window.LQ) {
+        window.LQ.recordGamePlayed('snake');
+        window.LQ.recordSnakeScore(STATE.score);
+      }
+    }
+    STATE.screen='home'; UI.showOverlay('home');
+  },
+
+  /* LifeQuest score-tier bonus: paid into the shared wallet once per
+     session, on top of whatever per-food coins were already earned
+     during play. Shows the results screen with the full breakdown. */
+  settleSessionRewards(score, reason){
+    if (window.LQ) {
+      window.LQ.recordGamePlayed('snake');
+      window.LQ.recordSnakeScore(score);
+    }
+    const bonus = scoreBonusFor(score);
+    if (bonus && window.LQ) {
+      window.LQ.award(bonus.coins, bonus.xp, `Snake score bonus (${score})`, { icon: '🐍', silent: true });
+      STATE.coins = window.LQ.get().coins;
+    }
+    const titleEl = $('#srcTitle');
+    if (titleEl) titleEl.textContent = reason === 'timeUp' ? "Time's Up!" : 'Game Over';
+    const scoreEl = $('#srcScore'); if (scoreEl) scoreEl.textContent = score;
+    const rewardsEl = $('#srcRewards');
+    if (rewardsEl) {
+      const pills = [];
+      if (bonus) pills.push(`<span class="src-pill src-coin">+${bonus.coins} 🪙 bonus</span>`);
+      if (bonus) pills.push(`<span class="src-pill src-xp">+${bonus.xp} XP bonus</span>`);
+      if (!bonus) pills.push(`<span class="src-pill src-coin">Score 100+ for a bonus next run</span>`);
+      rewardsEl.innerHTML = pills.join('');
+    }
+    const results = $('#sessionResults');
+    if (results) results.style.display = 'flex';
+  },
+
+  awardCoins(amount, popupText){
+    if (window.LQ) {
+      window.LQ.award(amount, 0, 'Snake');
+      STATE.coins = window.LQ.get().coins;
+    } else {
+      STATE.coins += amount;
+    }
+    Storage.saveProgress();
+    UI.updateScore();
+  },
+
+  setDir(nx,ny){
+    if(nx === -STATE.dir.x && ny === -STATE.dir.y) return;
+    STATE.pendingDir = {x:nx,y:ny};
+  },
+
+  placeFood(){
+    const occ = new Set(STATE.snake.map(s=>s.x+','+s.y));
+    STATE.obstacles.forEach(o=>occ.add(o.x+','+o.y));
+    let p;
+    do { p = {x:Math.floor(Math.random()*CONFIG.cols), y:Math.floor(Math.random()*CONFIG.rows)}; }
+    while(occ.has(p.x+','+p.y));
+    STATE.food = p;
+  },
+
+  awardXP(amount){
+    STATE.xp += amount;
+    STATE.xpGainedThisGame += amount;
+    let need = CONFIG.xpCurve(STATE.level);
+    while(STATE.xp >= need){
+      STATE.xp -= need;
+      STATE.level += 1;
+      this.awardCoins(CONFIG.coinsPerLevel);
+      UI.toast({icon:'⬆️', name:`Level Up! Lv ${STATE.level}`, desc:`Keep going! +${CONFIG.coinsPerLevel} coins`});
+      UI.flashLevelUp();
+      // A small celebratory burst right over the snake's head makes the
+      // level-up register in the board itself, not just in the toast.
+      if (STATE.snake.length) {
+        const headCell = STATE.snake[STATE.snake.length-1];
+        const c = Render.cell();
+        Particles.burst(headCell.x*c + c/2, headCell.y*c + c/2, CONFIG.colors.snakeHead);
+      }
+      Skins.checkUnlocks();
+      need = CONFIG.xpCurve(STATE.level);
+    }
+  },
+
+  tick(){
+    STATE.prevSnake = STATE.snake.map(s=>({...s}));
+    STATE.dir = STATE.pendingDir;
+    const head = STATE.snake[STATE.snake.length-1];
+    const nx = head.x + STATE.dir.x;
+    const ny = head.y + STATE.dir.y;
+
+    Challenges.updateLive(STATE.score, performance.now() - STATE.runStartTime);
+
+    if(nx<0||ny<0||nx>=CONFIG.cols||ny>=CONFIG.rows){ this.gameOver(); return; }
+    if(STATE.snake.some(s=>s.x===nx && s.y===ny)){ this.gameOver(); return; }
+    if(STATE.obstacles.some(o=>o.x===nx && o.y===ny)){ this.gameOver(); return; }
+
+    STATE.snake.push({x:nx,y:ny});
+    STATE.ateThisTick = false;
+
+    if(STATE.food && nx===STATE.food.x && ny===STATE.food.y){
+      STATE.score += 10;
+      STATE.scoreGainedThisGame += 10;
+      STATE.totalFood += 1;
+      STATE.ateThisTick = true;
+      this.awardXP(CONFIG.xpPerFood);
+      this.awardCoins(CONFIG.coinsPerFood);
+
+      // FX
+      const c = Render.cell();
+      const cx = STATE.food.x*c + c/2;
+      const cy = STATE.food.y*c + c/2;
+      Particles.burst(cx, cy, CONFIG.colors.food);
+      Popups.add(cx, cy - 10, '+10');
+
+      this.placeFood();
+      Challenges.onFoodEaten();
+      if(STATE.score % (CONFIG.speedupEvery*10) === 0){
+        STATE.tickMs = Math.max(CONFIG.minSpeedMs, STATE.tickMs - CONFIG.speedupStepMs);
+      }
+      Achievements.check();
+      UI.updateScore();
+    } else {
+      STATE.snake.shift();
+      // keep prevSnake aligned in length to current snake for smooth interp
+      STATE.prevSnake.shift();
+    }
+  },
+};
+
+/* ---------- Render ---------- */
+const Render = {
+  // Tracks food identity so we can detect "new food just spawned" and run
+  // a one-shot spawn-in animation instead of a static pulse.
+  _foodKey: null,
+  _foodSpawnAt: 0,
+  _deathFlashAt: 0,
+  boardWrapEl: null,
+  // Measures the space .board-wrap's flex slot actually has available and
+  // sizes it as an explicit square (px) that fits both dimensions. Doing
+  // this in JS instead of pure CSS aspect-ratio avoids the box stretching
+  // non-square when flex-grow and aspect-ratio disagree in a column
+  // layout (which happens on very wide or very short viewports).
+  layoutBoard(){
+    const el = this.boardWrapEl || (this.boardWrapEl = $('#boardWrap'));
+    if (!el) return;
+    const parent = el.parentElement;
+    if (!parent) return;
+    // Temporarily let the box go to 0 so it doesn't itself influence the
+    // available-space measurement of its flex siblings.
+    const prevW = el.style.width, prevH = el.style.height;
+    el.style.width = '0px'; el.style.height = '0px';
+    const parentRect = parent.getBoundingClientRect();
+    const cs = getComputedStyle(parent);
+    // getBoundingClientRect() includes the parent's own padding, which
+    // isn't actually available space for a child to occupy — subtract it,
+    // along with the flex column gaps the *other* visible siblings are
+    // still claiming (gap doesn't show up in any single child's rect, but
+    // it does eat real vertical space), or the computed square silently
+    // overflows the real content box.
+    const padX = parseFloat(cs.paddingLeft||0) + parseFloat(cs.paddingRight||0);
+    const padY = parseFloat(cs.paddingTop||0) + parseFloat(cs.paddingBottom||0);
+    const gap = parseFloat(cs.rowGap || cs.gap || 0) || 0;
+    // Absolutely/fixed-positioned children (the home/pause/game-over
+    // overlays, session-results card) don't consume flex layout space or
+    // participate in the column gap — they float on top of everything
+    // else — so they must be excluded here, or their height gets wrongly
+    // double-counted against the board's available space.
+    const visibleSiblings = Array.from(parent.children).filter(k => {
+      const kcs = getComputedStyle(k);
+      if (kcs.display === 'none') return false;
+      if (kcs.position === 'absolute' || kcs.position === 'fixed') return false;
+      return true;
+    });
+    const gapTotal = gap * Math.max(0, visibleSiblings.length - 1);
+    let siblingsH = 0;
+    visibleSiblings.forEach(k => { if (k !== el) siblingsH += k.getBoundingClientRect().height; });
+    const availW = parentRect.width - padX;
+    const availH = parentRect.height - padY - gapTotal - siblingsH;
+    const size = Math.max(120, Math.floor(Math.min(availW, availH)));
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    if (!size) { el.style.width = prevW; el.style.height = prevH; }
+  },
+  resize(){
+    this.layoutBoard();
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio||1, 2);
+    canvas.width = Math.floor(rect.width*dpr);
+    canvas.height = Math.floor(rect.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  },
+  cell(){
+    const rect = canvas.getBoundingClientRect();
+    return Math.min(rect.width/CONFIG.cols, rect.height/CONFIG.rows);
+  },
+  // Slightly gentler than a pure cubic ease-out: keeps the head moving at
+  // a more even pace for most of the tick, then settles softly into the
+  // new cell instead of visibly decelerating the whole way. Reads as
+  // smoother, more "alive" motion at the same underlying tick rate.
+  easeOut(t){ const f = 1 - Math.pow(1-t, 2.4); return f; },
+
+  notifyGameOver(){ this._deathFlashAt = performance.now(); },
+
+  draw(now, dt){
+    const c = this.cell();
+    const w = c*CONFIG.cols, h = c*CONFIG.rows;
+    const playing = STATE.screen==='playing';
+    const t = playing ? this.easeOut(Math.min(1, STATE.tickProgress)) : 1;
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#14141b';
+    ctx.fillRect(0,0,w,h);
+
+    // grid
+    ctx.strokeStyle = CONFIG.colors.bgGrid; ctx.lineWidth = 1;
+    for(let i=1;i<CONFIG.cols;i++){ ctx.beginPath(); ctx.moveTo(i*c,0); ctx.lineTo(i*c,h); ctx.stroke(); }
+    for(let j=1;j<CONFIG.rows;j++){ ctx.beginPath(); ctx.moveTo(0,j*c); ctx.lineTo(w,j*c); ctx.stroke(); }
+
+    // food — spawn-in pop, gentle pulse, and a slow-rotating sparkle ring
+    // so each fresh food reads as a distinct little "event" rather than
+    // a static dot. STATE.food is reused across ticks until eaten, so we
+    // key on its grid position to know when a *new* one just appeared.
+    if(STATE.food){
+      const key = STATE.food.x+','+STATE.food.y;
+      if(key !== this._foodKey){ this._foodKey = key; this._foodSpawnAt = now; }
+      const spawnT = Math.min(1, (now - this._foodSpawnAt)/260);
+      const spawnScale = spawnT < 1 ? (0.4 + 0.6*this.easeOut(spawnT)) : 1;
+
+      const pulse = 0.5 + 0.5*Math.sin(now/260);
+      const r = (c*0.30 + pulse*c*0.05) * spawnScale;
+      const cx = STATE.food.x*c + c/2;
+      const cy = STATE.food.y*c + c/2;
+
+      // sparkle ring: three faint dots orbiting the food, fades in with spawn
+      if (spawnT > 0.15) {
+        const ringA = Math.min(1, (spawnT-0.15)/0.85) * (0.35 + 0.25*pulse);
+        const ringR = c*0.46;
+        ctx.fillStyle = `rgba(255,208,107,${ringA})`;
+        for(let k=0;k<3;k++){
+          const ang = now/900 + k*(Math.PI*2/3);
+          ctx.beginPath();
+          ctx.arc(cx+Math.cos(ang)*ringR, cy+Math.sin(ang)*ringR, c*0.035, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+
+      ctx.shadowColor = CONFIG.colors.food;
+      ctx.shadowBlur = (20 + pulse*12) * spawnScale;
+      const grd = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(r,0.001));
+      grd.addColorStop(0, '#ffd06b');
+      grd.addColorStop(1, CONFIG.colors.food);
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.arc(cx,cy,Math.max(r,0),0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // snake with interpolation
+    const pad = Math.max(1, c*0.08);
+    const snake = STATE.snake;
+    const prev = STATE.prevSnake;
+    const lenS = snake.length;
+
+    // brief head "squash" pop right after eating, decaying over ~180ms,
+    // makes the bite feel like it has actual impact instead of the head
+    // just silently growing the tail.
+    const eatPop = STATE.ateThisTick ? (1 - t) : 0;
+
+    for(let i=0;i<lenS;i++){
+      const cur = snake[i];
+      // map current-index i to a previous position
+      // when snake grew this tick, head has no prev — use head's grid (no interp)
+      let pIdx;
+      if(STATE.ateThisTick){
+        // prev length = lenS - 1, indices shifted by 0
+        pIdx = i < prev.length ? i : -1;
+      } else {
+        // prev length = lenS; segments shifted by 1 (tail removed, head added)
+        pIdx = i - 1;
+      }
+      const p = (pIdx>=0 && pIdx<prev.length) ? prev[pIdx] : cur;
+      const x = (p.x + (cur.x - p.x)*t) * c + pad;
+      const y = (p.y + (cur.y - p.y)*t) * c + pad;
+      const size = c - pad*2;
+      const isHead = i === lenS-1;
+
+      const skin = Skins.currentColors();
+      let fillColor, glowColor;
+      if(skin.body === 'rainbow'){
+        const hue = (now/12 + i*22) % 360;
+        fillColor = `hsl(${hue}, 85%, ${isHead?70:55}%)`;
+        glowColor = `hsl(${hue}, 90%, 65%)`;
+      } else {
+        fillColor = isHead ? skin.head : skin.body;
+        glowColor = skin.head;
+      }
+      ctx.fillStyle = fillColor;
+      // Every segment gets a soft glow (not just the head) for a more
+      // luminous, modern look; the head glows noticeably brighter, and
+      // gets an extra flash right on the eat-pop frame.
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = isHead ? (16 + eatPop*14) : 6;
+      if (isHead && eatPop > 0) {
+        // scale the head slightly outward from its own center on impact
+        const grow = eatPop * c * 0.06;
+        roundRect(ctx, x-grow/2, y-grow/2, size+grow, size+grow, c*0.26);
+      } else {
+        roundRect(ctx, x, y, size, size, c*0.24);
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      if(isHead){
+        // eyes — direction aware
+        const dir = STATE.dir;
+        const eyeR = c*0.07;
+        const offFwd = c*0.18;
+        const offSide = c*0.14;
+        const headCx = x + size/2;
+        const headCy = y + size/2;
+        // perpendicular vector
+        const px = -dir.y, py = dir.x;
+        const e1x = headCx + dir.x*offFwd + px*offSide;
+        const e1y = headCy + dir.y*offFwd + py*offSide;
+        const e2x = headCx + dir.x*offFwd - px*offSide;
+        const e2y = headCy + dir.y*offFwd - py*offSide;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.arc(e1x,e1y,eyeR,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(e2x,e2y,eyeR,0,Math.PI*2); ctx.fill();
+        // pupils, slightly forward
+        ctx.fillStyle = '#0b0b0f';
+        const pr = eyeR*0.55;
+        ctx.beginPath(); ctx.arc(e1x+dir.x*eyeR*0.4, e1y+dir.y*eyeR*0.4, pr,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(e2x+dir.x*eyeR*0.4, e2y+dir.y*eyeR*0.4, pr,0,Math.PI*2); ctx.fill();
+      }
+    }
+
+    // obstacles
+    ctx.fillStyle = '#3b3b46';
+    STATE.obstacles.forEach(o=>{
+      roundRect(ctx, o.x*c+pad, o.y*c+pad, c-pad*2, c-pad*2, c*0.18);
+      ctx.fill();
+    });
+
+    // FX overlays
+    Particles.update(dt); Particles.draw(ctx);
+    Popups.update(dt); Popups.draw(ctx);
+
+    // Brief radial flash at the moment of death — reads as a soft "impact"
+    // without a jarring screen-shake, then fades over ~350ms. Drawn last
+    // so it sits over everything, including any final-frame particles.
+    if (this._deathFlashAt) {
+      const age = now - this._deathFlashAt;
+      if (age < 350) {
+        const a = (1 - age/350) * 0.5;
+        ctx.fillStyle = `rgba(239,68,68,${a})`;
+        ctx.fillRect(0,0,w,h);
+      } else {
+        this._deathFlashAt = 0;
+      }
+    }
+  },
+};
+
+function roundRect(ctx,x,y,w,h,r){
+  r = Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+/* ---------- UI ---------- */
+const UI = {
+  _lastHudScore: 0,
+  updateScore(){
+    ui.score.textContent = STATE.score;
+    ui.best.textContent = STATE.best;
+    ui.level.textContent = STATE.level;
+    ui.homeBest.textContent = STATE.best;
+    ui.homeLevel.textContent = STATE.level;
+    ui.coins.textContent = STATE.coins;
+    const need = CONFIG.xpCurve(STATE.level);
+    const pct = Math.max(0, Math.min(100, (STATE.xp/need)*100));
+    ui.xpFill.style.width = pct + '%';
+    ui.xpLabel.textContent = `${STATE.xp} / ${need}`;
+
+    // Compact floating HUD mirrors the same numbers; pulse the score pill
+    // whenever it actually changes so eating food feels responsive even
+    // though the full topbar is hidden during play.
+    if (ui.hudScore) ui.hudScore.textContent = STATE.score;
+    if (ui.hudLevel) ui.hudLevel.textContent = STATE.level;
+    if (ui.hudScorePill && STATE.score !== this._lastHudScore) {
+      ui.hudScorePill.classList.remove('pulse');
+      // restart the animation even if it's mid-flight
+      void ui.hudScorePill.offsetWidth;
+      ui.hudScorePill.classList.add('pulse');
+    }
+    this._lastHudScore = STATE.score;
+  },
+  showOverlay(which){
+    ui.home.classList.toggle('hidden', which!=='home');
+    ui.pause.classList.toggle('hidden', which!=='pause');
+    ui.over.classList.toggle('hidden', which!=='over');
+    // Drive chrome collapse/HUD visibility purely off game state, so the
+    // board can expand to fill the freed-up space the instant play starts.
+    const playing = which===null && STATE.screen==='playing';
+    const paused = which==='pause';
+    if (ui.appShell) {
+      ui.appShell.classList.toggle('is-playing', playing);
+      ui.appShell.classList.toggle('is-paused', paused);
+    }
+    // This is the one place Snake reaches outside its own scoped root: the
+    // host page's "← Back to Arcade" button sits above #arcadeGameHost and
+    // would otherwise keep eating space the board could use. Toggling a
+    // body-level class lets the host page's own CSS decide how to react
+    // (see body.lq-game-active in the main stylesheet) without Snake
+    // needing to know any of its markup. Stays collapsed through pause too,
+    // matching the chrome-stays-collapsed decision above.
+    document.body.classList.toggle('lq-game-active', playing || paused);
+    // The chrome collapse/expand above changes how much vertical space is
+    // left for the board, so it needs to be re-measured — once right away
+    // for the common case, and once more after the ~250ms CSS transition
+    // finishes in case the collapsing chrome was still animating when we
+    // took the first measurement.
+    Render.resize();
+    setTimeout(()=>{ if (moduleActive) Render.resize(); }, 260);
+  },
+  // Gold flash on whichever level indicator is currently visible — the
+  // full level badge when chrome is showing, the compact HUD pill mid-run.
+  flashLevelUp(){
+    [ui.hudLevelPill, container.querySelector('.level-badge')].forEach(el=>{
+      if(!el) return;
+      el.classList.remove('level-flash');
+      void el.offsetWidth;
+      el.classList.add('level-flash');
+    });
+  },
+  toast({icon,name,desc}){
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<div class="icon">${icon}</div><div><div class="t">${name}</div><div class="d">${desc||''}</div></div>`;
+    ui.toasts.appendChild(el);
+    setTimeout(()=>el.remove(), 4200);
+  },
+  openAchievements(){
+    ui.achList.innerHTML = '';
+    for(const a of ACHIEVEMENTS){
+      const unlocked = !!Achievements.unlocked[a.id];
+      const row = document.createElement('div');
+      row.className = 'ach' + (unlocked ? ' unlocked' : '');
+      row.innerHTML = `
+        <div class="ic">${a.icon}</div>
+        <div class="body">
+          <div class="name">${a.name}</div>
+          <div class="desc">${a.desc}</div>
+        </div>
+        <div class="status">${unlocked ? 'Unlocked' : 'Locked'}</div>`;
+      ui.achList.appendChild(row);
+    }
+    ui.achModal.classList.remove('hidden');
+  },
+  closeAchievements(){ ui.achModal.classList.add('hidden'); },
+
+  fmtTime(ms){
+    const totalSec = Math.floor(ms/1000);
+    const h = Math.floor(totalSec/3600);
+    const m = Math.floor((totalSec%3600)/60);
+    const s = totalSec%60;
+    if(h>0) return `${h}h ${m}m`;
+    if(m>0) return `${m}m ${s}s`;
+    return `${s}s`;
+  },
+
+  openStats(){
+    const avg = STATE.gamesPlayed>0 ? Math.round(STATE.totalScore/STATE.gamesPlayed) : 0;
+    const cards = [
+      {icon:'🎮', label:'Games Played', value: STATE.gamesPlayed},
+      {icon:'🍎', label:'Total Food Eaten', value: STATE.totalFood},
+      {icon:'🏆', label:'Highest Score', value: STATE.best},
+      {icon:'📈', label:'Average Score', value: avg},
+      {icon:'⏱️', label:'Longest Survival', value: this.fmtTime(STATE.longestSurvivalMs)},
+      {icon:'🕒', label:'Total Play Time', value: this.fmtTime(STATE.totalPlayTimeMs)},
+    ];
+    ui.statsGrid.innerHTML = cards.map(c => `
+      <div class="stat-card">
+        <div class="si">${c.icon}</div>
+        <div class="sv">${c.value}</div>
+        <div class="sl">${c.label}</div>
+      </div>`).join('');
+    ui.statsModal.classList.remove('hidden');
+  },
+  closeStats(){ ui.statsModal.classList.add('hidden'); },
+
+  renderSkins(){
+    ui.skinGrid.innerHTML = SKINS.map(s=>{
+      const unlocked = Skins.isUnlocked(s);
+      const selected = STATE.currentSkin === s.id;
+      let reqText = '';
+      if(!unlocked){
+        if(s.unlock.type==='coins') reqText = `🪙 ${s.unlock.cost} coins`;
+        else if(s.unlock.type==='level') reqText = `Reach Lv ${s.unlock.level}`;
+        else if(s.unlock.type==='achievement') reqText = `Unlock ${s.unlock.count} achievements`;
+      }
+      const previewSegs = s.body === 'rainbow'
+        ? ['#ff5f6d','#ffc371','#7bed9f','#54a0ff','#a55eea'].map(c=>`<div class="seg" style="background:${c}"></div>`).join('')
+        : `<div class="seg" style="background:${s.head}"></div><div class="seg" style="background:${s.body}"></div><div class="seg" style="background:${s.body}"></div>`;
+      const badge = selected ? `<div class="skin-check">✓</div>` : (!unlocked ? `<div class="skin-lockbadge">🔒</div>` : '');
+      const action = unlocked
+        ? (selected ? `Equipped` : `Select`)
+        : (s.unlock.type==='coins' ? `Buy` : `Locked`);
+      return `
+        <div class="skin-card ${selected?'selected':''} ${unlocked?'':'locked'}" data-skin="${s.id}">
+          ${badge}
+          <div class="skin-preview">${previewSegs}</div>
+          <div class="skin-name">${s.name}</div>
+          <div class="skin-req">${unlocked ? (selected?'Equipped':'Unlocked') : reqText}</div>
+          <button class="btn-mini" data-action="${s.id}" ${(!unlocked && s.unlock.type!=='coins')?'disabled':''}>${action}</button>
+        </div>`;
+    }).join('');
+    ui.skinGrid.querySelectorAll('.btn-mini').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const skin = SKINS.find(s=>s.id===btn.dataset.action);
+        if(!skin) return;
+        if(Skins.isUnlocked(skin)) Skins.select(skin);
+        else if(skin.unlock.type==='coins') Skins.buy(skin);
+      });
+    });
+  },
+  openSkins(){ this.renderSkins(); ui.skinsModal.classList.remove('hidden'); },
+  closeSkins(){ ui.skinsModal.classList.add('hidden'); },
+
+  renderChallenge(){
+    if(!STATE.challenge) return;
+    const c = STATE.challenge;
+    ui.challengeIcon.textContent = c.icon;
+    ui.challengeTitle.textContent = STATE.challengeDone ? 'Challenge Complete!' : 'Daily Challenge';
+    ui.challengeSub.textContent = c.label;
+    const pct = Math.max(0, Math.min(100, (STATE.challengeProgress/c.goal)*100));
+    ui.challengeFill.style.width = pct + '%';
+    ui.challengeReward.innerHTML = STATE.challengeDone
+      ? `✓ Claimed`
+      : `+${c.rewardXP} XP<br>+${c.rewardCoins} 🪙`;
+    ui.challengeCard.classList.toggle('done', STATE.challengeDone);
+  },
+};
+
+/* ---------- Input ---------- */
+const Input = {
+  _onKeydown: null,
+  _onResize: null,
+  _dpadMQ: null,
+  _onDpadMQChange: null,
+  init(){
+    this._onKeydown = (e)=>{
+      if (!moduleActive) return; // don't steal keys once this Snake instance is unmounted
+      const k = e.key.toLowerCase();
+      if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)) e.preventDefault();
+      if(STATE.screen==='playing'){
+        if(k==='arrowup'||k==='w') Game.setDir(0,-1);
+        else if(k==='arrowdown'||k==='s') Game.setDir(0,1);
+        else if(k==='arrowleft'||k==='a') Game.setDir(-1,0);
+        else if(k==='arrowright'||k==='d') Game.setDir(1,0);
+        else if(k===' '||k==='p') Game.pause();
+      } else if(STATE.screen==='paused' && (k===' '||k==='p')){ Game.resume(); }
+      else if((STATE.screen==='home'||STATE.screen==='over') && (k==='enter'||k===' ')){ requestNewSession(); }
+    };
+    window.addEventListener('keydown', this._onKeydown, {passive:false});
+
+    let sx=0, sy=0, active=false;
+    const wrap = $('#boardWrap');
+    wrap.addEventListener('touchstart',(e)=>{
+      const t=e.changedTouches[0]; sx=t.clientX; sy=t.clientY; active=true;
+    },{passive:true});
+    wrap.addEventListener('touchend',(e)=>{
+      if(!active) return; active=false;
+      const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy;
+      if(Math.abs(dx)<20 && Math.abs(dy)<20) return;
+      if(Math.abs(dx)>Math.abs(dy)) Game.setDir(dx>0?1:-1, 0);
+      else Game.setDir(0, dy>0?1:-1);
+    },{passive:true});
+
+    container.querySelectorAll('.dpad button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const d=b.dataset.dir;
+        if(d==='up') Game.setDir(0,-1);
+        if(d==='down') Game.setDir(0,1);
+        if(d==='left') Game.setDir(-1,0);
+        if(d==='right') Game.setDir(1,0);
+      });
+    });
+
+    // The d-pad is only useful on small/touch screens; on desktop the
+    // hint text + keyboard are enough and the buttons would just clutter
+    // the board. Same breakpoint as before (640px), now toggled as a
+    // class so it can coexist with the .is-playing visibility rule.
+    if (ui.dpad) {
+      this._dpadMQ = window.matchMedia('(max-width: 640px)');
+      this._onDpadMQChange = (e)=> ui.dpad.classList.toggle('touch-enabled', e.matches);
+      ui.dpad.classList.toggle('touch-enabled', this._dpadMQ.matches);
+      this._dpadMQ.addEventListener('change', this._onDpadMQChange);
+    }
+
+    $('#startBtn').addEventListener('click', ()=>requestNewSession());
+    $('#resumeBtn').addEventListener('click', ()=>Game.resume());
+    $('#quitBtn').addEventListener('click', ()=>Game.goHome());
+    $('#againBtn').addEventListener('click', ()=>requestNewSession());
+    $('#homeBtn').addEventListener('click', ()=>Game.goHome());
+    $('#pauseBtn').addEventListener('click', ()=>{
+      if(STATE.screen==='playing') Game.pause();
+      else if(STATE.screen==='paused') Game.resume();
+    });
+    $('#restartBtn').addEventListener('click', ()=>requestNewSession());
+    $('#srcCloseBtn').addEventListener('click', ()=>{
+      const results = $('#sessionResults'); if (results) results.style.display = 'none';
+    });
+    $('#achBtn').addEventListener('click', ()=>UI.openAchievements());
+    $('#trophyBtn').addEventListener('click', ()=>UI.openAchievements());
+    $('#achClose').addEventListener('click', ()=>UI.closeAchievements());
+    ui.achModal.addEventListener('click',(e)=>{ if(e.target===ui.achModal) UI.closeAchievements(); });
+
+    $('#statsBtn').addEventListener('click', ()=>UI.openStats());
+    $('#statsClose').addEventListener('click', ()=>UI.closeStats());
+    ui.statsModal.addEventListener('click',(e)=>{ if(e.target===ui.statsModal) UI.closeStats(); });
+
+    $('#skinsBtn').addEventListener('click', ()=>UI.openSkins());
+    $('#skinsBtnGame').addEventListener('click', ()=>UI.openSkins());
+    $('#skinsClose').addEventListener('click', ()=>UI.closeSkins());
+    ui.skinsModal.addEventListener('click',(e)=>{ if(e.target===ui.skinsModal) UI.closeSkins(); });
+  },
+  teardown(){
+    if (this._onKeydown) window.removeEventListener('keydown', this._onKeydown);
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
+    if (this._dpadMQ && this._onDpadMQChange) this._dpadMQ.removeEventListener('change', this._onDpadMQChange);
+  }
+};
+
+/* The Arcade tab already charges SNAKE_ENTRY_COST before mountSnake() is
+   even called, covering the very first "Start Game" press. As long as
+   the 10-minute session clock is still running, every replay within that
+   window (Play Again / Restart / Enter-to-retry) is free — dying doesn't
+   end the session, only the timer running out does. A fresh charge via
+   window.__arcadeChargeForReplay only kicks in once that window has
+   actually closed and the player wants to start a brand new session. */
+let entryAlreadyPaid = true;
+function requestNewSession(){
+  const results = $('#sessionResults'); if (results) results.style.display = 'none';
+  if (entryAlreadyPaid || Session.active) {
+    entryAlreadyPaid = false;
+    Game.start();
+    return;
+  }
+  if (typeof window.__arcadeChargeForReplay === 'function') {
+    if (window.__arcadeChargeForReplay()) Game.start();
+    // if charging failed (not enough coins), the host already showed the
+    // modal — stay on whichever screen we're on (home/over) without starting.
+  } else {
+    Game.start();
+  }
+}
+
+/* ---------- Main loop ---------- */
+let lastFrame = performance.now();
+let rafHandle = null;
+function loop(now){
+  if (!moduleActive) return; // stop the rAF chain once unmounted
+  const dt = Math.min(0.05, (now - lastFrame)/1000);
+  lastFrame = now;
+
+  BG.draw();
+
+  if(STATE.screen==='playing'){
+    const elapsed = now - STATE.lastTick;
+    STATE.tickProgress = Math.min(1, elapsed / STATE.tickMs);
+    if(elapsed >= STATE.tickMs){
+      STATE.lastTick = now;
+      Game.tick();
+      STATE.tickProgress = 0;
+    }
+  } else {
+    STATE.tickProgress = 1;
+  }
+  Render.draw(now, dt);
+  rafHandle = requestAnimationFrame(loop);
+}
+
+/* ---------- Boot / teardown ---------- */
+function boot(){
+  Storage.loadAll();
+  Achievements.load();
+  Challenges.load();
+  BG.init();
+  Render.resize();
+  Game.reset();
+  STATE.screen = 'home';
+  UI.updateScore();
+  UI.renderChallenge();
+  UI.showOverlay('home');
+  Input.init();
+  Input._onResize = ()=>Render.resize();
+  window.addEventListener('resize', Input._onResize);
+  lastFrame = performance.now();
+  rafHandle = requestAnimationFrame(loop);
+}
+function teardown(){
+  if (STATE.screen === 'playing' || STATE.screen === 'paused') {
+    // Route through goHome() first so an in-progress run's score/play-count
+    // still gets recorded into the shared wallet stats before we tear down,
+    // exactly as if the player had hit Quit from the pause menu.
+    Game.goHome();
+  }
+  moduleActive = false;
+  Input.teardown();
+  BG.teardown();
+  Session.stop();
+  document.body.classList.remove('lq-game-active');
+  if (rafHandle) cancelAnimationFrame(rafHandle);
+}
+boot();
+
+// Expose a teardown hook the host page calls when navigating away from Arcade.
+container.__snakeTeardown = teardown;
+
+    })(container);
+}
+window.mountSnake = mountSnake;
+
+</script>
+
 </body>
 </html>
